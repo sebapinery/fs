@@ -10,16 +10,20 @@ class Folder {
     };
     this.composite = composite;
   }
-  showType(){
+  showType() {
     return this.metadata.type;
-  }
-
-  showPath() {
-      return this.metadata.path
   }
 
   showName() {
     return this.name;
+  }
+
+  showMetadata() {
+    return this.metadata;
+  }
+
+  showPath() {
+    return this.metadata.path;
   }
 
   showComposite() {
@@ -28,7 +32,7 @@ class Folder {
   }
 
   addToComposite(element) {
-    return this.composite.push(element);
+    this.composite.push(element);
     // return this.composite;
   }
 

@@ -1,16 +1,17 @@
 class File {
-  constructor(name, metadata) {
+  constructor(name, metadata, content) {
     this.name = name;
+    this.content = content;
     this.metadata = {
-        type: "file",
-        path: metadata.path,
-        createdAt: `${new Date().toLocaleDateString(
-          "es-AR"
-        )} ${new Date().toLocaleTimeString("es-AR")}`,
-      };
+      type: "file",
+      path: metadata.path,
+      createdAt: `${new Date().toLocaleDateString(
+        "es-AR"
+      )} ${new Date().toLocaleTimeString("es-AR")}`,
+    };
   }
 
-  showType(){
+  showType() {
     return this.metadata.type;
   }
 
@@ -20,8 +21,8 @@ class File {
   showMetadata() {
     return this.metadata;
   }
-  showPath(){
-      return this.metadata.path;
+  showPath() {
+    return this.metadata.path;
   }
 
   print() {
