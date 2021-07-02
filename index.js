@@ -91,30 +91,6 @@ const showFile = (argvs) => {
   );
 };
 
-// COMMAND $create_file
-const createFile = (argvs) => {
-  const name = argvs[1];
-  const metadata = {
-    path: currentPath,
-  };
-
-  console.log(argvs[2]);
-
-  const newFileCreated = new File(name, metadata);
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>>File created:<<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log("                                           ");
-  console.log("                                           ");
-  console.log(`Name: ${newFileCreated.showName()}`);
-  console.log(`En la ruta (curentPath): ${currentPath}`);
-  console.log(`En la ruta (en constructor): ${newFileCreated.showPath()}`);
-  console.log("                                           ");
-  console.log("                                           ");
-  // console.log(newFileCreated.print())
-  return currentFolder.addToComposite(newFileCreated);
-};
-
 var readline = require("readline");
 const { argv } = require("process");
 const { log } = require("console");
@@ -132,7 +108,7 @@ rl.on("line", function (line) {
       selectFolder(argvs);
       break;
     case "cat": // create_file
-      createFile(argvs);
+      controller.createFile(argvs, currentPath, currentFolder);
       break;
     case "mk": // create_folder
       createFolder(argvs);
