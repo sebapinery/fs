@@ -11,7 +11,16 @@ var currentFolder = mainFolder;
 var parentFolder;
 var currentPath = currentFolder.showPath();
 
-const duplicateValidator = (type, name) => {
+const fileFinder = (type, name) => {
+  const fileFound = currentFolder
+    .showComposite()
+    .filter((content) => content.showType() === type)
+    .filter((content) => content.showName() === name);
+
+    return fileFound;
+} 
+
+const exist = (type, name) => {
   const fileExist = currentFolder
     .showComposite()
     .filter((content) => content.showType() === type)
@@ -35,10 +44,10 @@ const createFile = (argvs) => {
   const metadata = {
     path: currentPath,
   };
-  const fileExist = duplicateValidator("file", name);
+  const fileExist = exist("file", name);
   if (fileExist) {
     return console.log(
-      "Esta intentando crar un archivo con un nombre ya en uso, seleccione otro. El archivo no fue creado"
+      ">>>> Esta intentando crar un archivo con un nombre ya en uso, seleccione otro. El archivo no fue creado"
     );
   } else {
     const newFileCreated = new File(name, metadata, content);
@@ -62,11 +71,12 @@ const createFolder = (argvs) => {
     path: currentPath,
   };
 
-  const folderExist = duplicateValidator("folder", name);
+  const folderExist = exist("folder", name);
   if (folderExist) {
     return console.log(
-      "Esta intentando crar una carpeta con un nombre ya en uso, seleccione otro. La carpeta no fue creada"
+      " >>>> Esta intentando crar una carpeta con un nombre ya en uso, seleccione otro. La carpeta no fue creada"
     );
+    
   } else {
     const newFolder = new Folder(name, [], metadata);
     console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
@@ -206,15 +216,20 @@ const showEnvPath = () => {
 
 // COMMAND $show
 const showFile = (argvs) => {
-  const positionInArray = argvs[1];
-  const list = currentFolder.showComposite();
-  const selectedFile = list[0];
-  // console.log(selectedFile.constructor.name);
+  const name = argvs[1];
+  const fileExist = exist("file",name);
 
-  // FILTRAR EL ARRAY DEL CURRENT FOLDER CON SOLAMENTE ARCHIVOS
-  const arrayOfFiles = list.filter((file) => file.showType() === "file");
-  console.log("RESULTADO ARRAY FILTRADO DE CURRENT FOLDER >>>>>>>>>>>>>");
-  console.log(arrayOfFiles);
+  if(!fileExist) {
+    console.log("El archivo no existe")
+  }else{
+    const fileFound = fileFinder("file", name)[0];
+    // console.log("CONTENT DEL ARCHIVO", fileFound.showName())
+    console.log("")
+    console.log("")
+    console.log(fileFound.showContent())
+    console.log("")
+    console.log("")
+  }
 };
 
 module.exports = {
@@ -233,5 +248,4 @@ module.exports = {
   moveToParentFolder,
   showParentFolder,
   showEnvPath,
-  duplicateValidator,
 };

@@ -11,6 +11,10 @@ class File {
     };
   }
 
+  showContent(){
+    return this.content;
+  }
+
   showType() {
     return this.metadata.type;
   }
