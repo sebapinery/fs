@@ -10,7 +10,6 @@ var mainFolder = new Folder("root", [], initialMetaData);
 var currentFolder = mainFolder;
 var parentFolder;
 var currentPath = initialPath;
-// process.env.path = currentPath;
 
 const showPath = (currentPath) => {
   console.log(currentPath);
@@ -19,13 +18,10 @@ const showPath = (currentPath) => {
 // COMMAND $cat //// debe ser $create_file
 const createFile = (argvs) => {
   const name = argvs[1];
+  const content = argvs.slice(2).join(" ");
   const metadata = {
     path: currentPath,
   };
-
-  const content = argvs.slice(2).join(" ");
-  // const content2 = content.split(",")
-  console.log(" >>>> Content2 : ",content)
 
   const newFileCreated = new File(name, metadata, content);
   console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
@@ -91,17 +87,16 @@ const selectFolder = (argvs) => {
 };
 
 const moveToParentFolder = () => {
+  console.log("SALE POR ACA");
   if (parentFolder === mainFolder) {
     currentFolder = parentFolder;
     parentFolder = undefined;
     currentPath = currentFolder.showPath();
 
-
     console.log("Esta en el nivel superior IGUAL A MAIN");
   } else if (parentFolder) {
     currentFolder = parentFolder;
     currentPath = currentFolder.showPath();
-
   } else if (!parentFolder) {
     console.log("Esta en el nivel superior NO HAY PARENT");
   }
@@ -214,5 +209,5 @@ module.exports = {
   showCurrentPath,
   moveToParentFolder,
   showParentFolder,
-  showEnvPath
+  showEnvPath,
 };

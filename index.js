@@ -6,25 +6,9 @@ var Folder = require("./models/folder");
 // CONTROLLERS
 const controller = require("./controllers");
 
-// COMMAND $cd
-// const moveToParentFolder = () => {
-//   if (parentFolder === mainFolder) {
-//     parentFolder = undefined;
-//     console.log("Esta en el nivel superior");
-//   } else if (parentFolder) {
-//     currentFolder = parentFolder;
-//     currentPath = currentFolder.showPath();
-//   } else if (!parentFolder) {
-//     console.log("Esta en el nivel superior");
-//   }
-// };
-
 var readline = require("readline");
-const { argv } = require("process");
-const { log } = require("console");
 rl = readline.createInterface(process.stdin, process.stdout);
 prefix = `FileSystem> `;
-// prefix = process.env.path;
 
 rl.on("line", function (line) {
   const argvs = line.split(" ");
