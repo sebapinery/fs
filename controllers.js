@@ -1,3 +1,4 @@
+var Folder = require("./models/folder");
 var File = require("./models/file");
 
 const showPath = (currentPath) => {
@@ -11,7 +12,7 @@ const createFile = (argvs, currentPath, currentFolder) => {
       path: currentPath,
     };
   
-    console.log(argvs[2]);
+    // console.log(argvs[2]);
   
     const newFileCreated = new File(name, metadata);
     console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
@@ -28,4 +29,25 @@ const createFile = (argvs, currentPath, currentFolder) => {
     return currentFolder.addToComposite(newFileCreated);
   };
 
-  module.exports = { showPath, createFile }
+  const createFolder = (argvs, currentPath, currentFolder) => {
+    const name = argvs[1];
+    const metadata = {
+      path: currentPath,
+    };
+  
+    const newFolder = new Folder(name, [], metadata);
+    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
+    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log("                                           ");
+    console.log("                                           ");
+    console.log(`Name: ${newFolder.showName()}`);
+    console.log(`En la ruta (curentPath): ${currentPath}`);
+    console.log(`En la ruta (en constructor): ${newFolder.showPath()}`);
+    console.log("                                           ");
+    console.log("                                           ");
+  
+    return currentFolder.addToComposite(newFolder);
+  };
+
+  module.exports = { showPath, createFile, createFolder }

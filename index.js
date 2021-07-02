@@ -55,26 +55,26 @@ const moveToParentFolder = () => {
 };
 
 // COMMAND $create_folder
-const createFolder = (argvs) => {
-  const name = argvs[1];
-  const metadata = {
-    path: currentPath,
-  };
+// const createFolder = (argvs) => {
+//   const name = argvs[1];
+//   const metadata = {
+//     path: currentPath,
+//   };
 
-  const newFolder = new Folder(name, [], metadata);
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log("                                           ");
-  console.log("                                           ");
-  console.log(`Name: ${newFolder.showName()}`);
-  console.log(`En la ruta (curentPath): ${currentPath}`);
-  console.log(`En la ruta (en constructor): ${newFolder.showPath()}`);
-  console.log("                                           ");
-  console.log("                                           ");
+//   const newFolder = new Folder(name, [], metadata);
+//   console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+//   console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
+//   console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+//   console.log("                                           ");
+//   console.log("                                           ");
+//   console.log(`Name: ${newFolder.showName()}`);
+//   console.log(`En la ruta (curentPath): ${currentPath}`);
+//   console.log(`En la ruta (en constructor): ${newFolder.showPath()}`);
+//   console.log("                                           ");
+//   console.log("                                           ");
 
-  return currentFolder.addToComposite(newFolder);
-};
+//   return currentFolder.addToComposite(newFolder);
+// };
 
 // COMMAND $show
 const showFile = (argvs) => {
@@ -111,7 +111,7 @@ rl.on("line", function (line) {
       controller.createFile(argvs, currentPath, currentFolder);
       break;
     case "mk": // create_folder
-      createFolder(argvs);
+      controller.createFolder(argvs, currentPath, currentFolder);
       break;
     case "ls":
       console.log(currentFolder.showComposite());
