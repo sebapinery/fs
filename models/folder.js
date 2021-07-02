@@ -1,12 +1,18 @@
 class Folder {
-  constructor(name, composite = [], path) {
+  constructor(name, composite = [], metadata) {
     this.name = name;
-    this.path = path;
+    this.metadata = {
+      type: "folder",
+      path: metadata.path,
+      createdAt: `${new Date().toLocaleDateString(
+        "es-AR"
+      )} ${new Date().toLocaleTimeString("es-AR")}`,
+    };
     this.composite = composite;
   }
 
-  showPath(){
-      return this.path;
+  showPath() {
+    return this.metadata.path;
   }
 
   showName() {

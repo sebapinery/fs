@@ -3,46 +3,14 @@
 var File = require("./models/file");
 var Folder = require("./models/folder");
 
-var mainFolder = new Folder("root", [], "/");
+// CONTROLLERS
+const controller = require("./controllers");
+
+const initialPath =  "~/"
+var mainFolder = new Folder("root", [], initialPath);
 var currentFolder = mainFolder;
 var parentFolder;
-var currentPath = currentFolder.showPath();
-
-// const pathBuilder = (currentPath, newFolder) => {
-
-//   console.log(">>>>>>>>>> ARGS DE PATH BUILDER <<<<<<<<<<<<<<<<",currentPath, newFolder)
-//   console.log("                                           ");
-//   console.log("                                           ");
-//   console.log("                                           ");
-
-//   if(!parentFolder){
-//     console.log(">>>>>>>> MISMO PATH NO HAY PARENT <<<<<<<<<<<")
-//     console.log("                                           ");
-//     console.log("                                           ");
-//     return currentPath;
-//   }
-//   // else if(parentFolder === mainFolder){
-//   //   console.log(">>>>>>>> MISMO PARENT Y MAIN <<<<<<<<<<<")
-//   //   console.log("                                           ");
-//   //   console.log("                                           ");
-//   //   return currentPath;
-//   // }
-//   else{
-//     console.log(">>>>>>>> SALE POR EL ELSE <<<<<<<<<<<");
-//     console.log("                                           ");
-//     console.log("                                           ");
-//     const newPath = currentPath + newFolder;
-//     console.log(" NEW PATH >>>>>>>>>>> ",newPath);
-//     console.log("                                           ");
-//     console.log("                                           ");
-//     currentPath = newPath;
-//     return currentPath;
-//   }
-// }
-
-const showPath = () => {
-  console.log(currentPath)
-}
+var currentPath = initialPath;
 
 // COMANDO cd $foldername
 const selectFolder = (argvs) => {
@@ -56,20 +24,18 @@ const selectFolder = (argvs) => {
       (e) => e.name == folderDestination
     );
     // currentPath = pathBuilder(currentPath, folderFound[0].showName());
-    
 
     if (folderFound.length === 0) {
       console.log(" >>>>>>>>>>>>>>>> Folder not found <<<<<<<<<<<<<<<<");
     } else {
       parentFolder = currentFolder;
       currentFolder = folderFound[0];
-      if(currentPath === "/"){
-        currentPath = `${currentPath + currentFolder.showName()}`
-      }else{
-        currentPath = `${currentPath +"/"+ currentFolder.showName()}`
-
+      if (currentPath === "~/") {
+        currentPath = `${currentPath + currentFolder.showName()}`;
+      } else {
+        currentPath = `${currentPath + "/" + currentFolder.showName()}`;
       }
-    // console.log(">>>>>>>>>>>>>> CUUURENT PATH EN SELECT FOLDER",currentPath)
+      // console.log(">>>>>>>>>>>>>> CUUURENT PATH EN SELECT FOLDER",currentPath)
       console.log(`Usted esta la ruta ${currentPath}`);
     }
   }
@@ -91,8 +57,11 @@ const moveToParentFolder = () => {
 // COMMAND $create_folder
 const createFolder = (argvs) => {
   const name = argvs[1];
+  const metadata = {
+    path: currentPath,
+  };
 
-  const newFolder = new Folder(name, [], currentPath);
+  const newFolder = new Folder(name, [], metadata);
   console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
   console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
   console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
@@ -113,14 +82,23 @@ const showFile = (argvs) => {
   const list = currentFolder.showComposite();
   const selectedFile = list[0];
   // console.log(selectedFile.constructor.name);
+
+  // FILTRAR EL ARRAY DEL CURRENT FOLDER CON SOLAMENTE ARCHIVOS
+  const arrayOfFiles = list.filter((file) => file.constructor.name === "File");
+  console.log(
+    "RESULTADO ARRAY FILTRADO DE CURRENT FOLDER >>>>>>>>>>>>>",
+    arrayOfFiles
+  );
 };
 
 // COMMAND $create_file
 const createFile = (argvs) => {
   const name = argvs[1];
   const metadata = {
-    content: argvs[2],
+    path: currentPath,
   };
+
+  console.log(argvs[2]);
 
   const newFileCreated = new File(name, metadata);
   console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
@@ -147,42 +125,37 @@ rl.on("line", function (line) {
   const argvs = line.split(" ");
   const command = argvs[0].trim();
   switch (command) {
-    case "pf":
-      console.log(
-        "PARENT FOLDER >>> ",
-        `${parentFolder ? parentFolder.showName() : "Estas en la ruta /"}`
-      );
-      break; 
-    case "cd..":
+    case "cd..": //
       moveToParentFolder();
       break;
     case "cd":
       selectFolder(argvs);
       break;
-    case "cat":
+    case "cat": // create_file
       createFile(argvs);
       break;
-    case "mk":
+    case "mk": // create_folder
       createFolder(argvs);
       break;
-    // case "path":
-    //   console.log(currentFolder.showName());
-    //   break;
     case "ls":
       console.log(currentFolder.showComposite());
       break;
-    case "sf":
-      console.log(currentFolder.print())
+    case "sf": /////////////// dev ///////////////
+      console.log(currentFolder.print());
       break;
-    case "file":
+    case "file": /////////////// dev ///////////////
       console.log(JSON.stringify(mainFolder));
       break;
-    case "path":
-      showPath();
+    case "path": // whereami
+      controller.showPath(currentPath);
       break;
-    case "exit":
+    case "show": //
+      showFile(argvs);
+      break;
+    case "exit": /////////////// dev ///////////////
       process.exit(0);
     default:
+      /////////////// dev ///////////////
       console.log("COMANDO NO VALIDO: ", argvs);
       break;
   }
