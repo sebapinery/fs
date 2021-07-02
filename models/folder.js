@@ -10,9 +10,12 @@ class Folder {
     };
     this.composite = composite;
   }
+  showType(){
+    return this.metadata.type;
+  }
 
   showPath() {
-    return this.metadata.path;
+      return this.metadata.path
   }
 
   showName() {

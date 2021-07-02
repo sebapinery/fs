@@ -10,6 +10,10 @@ class File {
       };
   }
 
+  showType(){
+    return this.metadata.type;
+  }
+
   showName() {
     return this.name;
   }

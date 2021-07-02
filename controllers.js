@@ -1,12 +1,22 @@
 var Folder = require("./models/folder");
 var File = require("./models/file");
 
+const initialPath =  "~/"
+const initialMetaData = {
+  path: initialPath,
+}
+
+var mainFolder = new Folder("root", [], initialMetaData);
+var currentFolder = mainFolder;
+var parentFolder;
+var currentPath = initialPath;
+
 const showPath = (currentPath) => {
     console.log(currentPath);
   };
 
   // COMMAND $create_file
-const createFile = (argvs, currentPath, currentFolder) => {
+const createFile = (argvs) => {
     const name = argvs[1];
     const metadata = {
       path: currentPath,
@@ -29,7 +39,7 @@ const createFile = (argvs, currentPath, currentFolder) => {
     return currentFolder.addToComposite(newFileCreated);
   };
 
-  const createFolder = (argvs, currentPath, currentFolder) => {
+  const createFolder = (argvs) => {
     const name = argvs[1];
     const metadata = {
       path: currentPath,
@@ -50,4 +60,57 @@ const createFile = (argvs, currentPath, currentFolder) => {
     return currentFolder.addToComposite(newFolder);
   };
 
-  module.exports = { showPath, createFile, createFolder }
+  const selectFolder = (argvs) => {
+    if (argvs.length === 1) {
+      currentFolder = mainFolder;
+    } else {
+      const folderDestination = argvs[1];
+      const listOfcomposite = currentFolder.showComposite();
+  
+      const folderFound = listOfcomposite.filter(
+        (e) => e.name == folderDestination
+      );
+      // currentPath = pathBuilder(currentPath, folderFound[0].showName());
+  
+      if (folderFound.length === 0) {
+        console.log(" >>>>>>>>>>>>>>>> Folder not found <<<<<<<<<<<<<<<<");
+      } else {
+        parentFolder = currentFolder;
+        currentFolder = folderFound[0];
+        if (currentPath === "~/") {
+          currentPath = `${currentPath + currentFolder.showName()}`;
+        } else {
+          currentPath = `${currentPath + "/" + currentFolder.showName()}`;
+        }
+        // console.log(">>>>>>>>>>>>>> CUUURENT PATH EN SELECT FOLDER",currentPath)
+        console.log(`Usted esta la ruta ${currentPath}`);
+      }
+    }
+  };
+
+  const showFile = (argvs) => {
+    const positionInArray = argvs[1];
+    const list = currentFolder.showComposite();
+    const selectedFile = list[0];
+    // console.log(selectedFile.constructor.name);
+  
+    // FILTRAR EL ARRAY DEL CURRENT FOLDER CON SOLAMENTE ARCHIVOS
+    const arrayOfFiles = list.filter((file) => file.showType() === "file");
+    console.log(
+      "RESULTADO ARRAY FILTRADO DE CURRENT FOLDER >>>>>>>>>>>>>",
+      arrayOfFiles
+    );
+  };
+
+
+  module.exports = { 
+    showPath, 
+    createFile, 
+    createFolder,
+    selectFolder,
+    mainFolder,
+    currentFolder,
+    parentFolder,
+    currentPath,
+    showFile 
+  }
