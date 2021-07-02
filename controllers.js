@@ -11,6 +11,19 @@ var currentFolder = mainFolder;
 var parentFolder;
 var currentPath = currentFolder.showPath();
 
+const duplicateValidator = (type, name) => {
+  const fileExist = currentFolder
+    .showComposite()
+    .filter((content) => content.showType() === type)
+    .filter((content) => content.showName() === name);
+
+  if (fileExist.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 const showPath = (currentPath) => {
   console.log(currentPath);
 };
@@ -22,19 +35,25 @@ const createFile = (argvs) => {
   const metadata = {
     path: currentPath,
   };
-
-  const newFileCreated = new File(name, metadata, content);
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>>File created:<<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log("                                           ");
-  console.log("                                           ");
-  console.log(`Name: ${newFileCreated.showName()}`);
-  console.log(`En la ruta (curentPath): ${currentPath}`);
-  console.log(`En la ruta (en constructor): ${newFileCreated.showPath()}`);
-  console.log("                                           ");
-  console.log("                                           ");
-  return currentFolder.addToComposite(newFileCreated);
+  const fileExist = duplicateValidator("file", name);
+  if (fileExist) {
+    return console.log(
+      "Esta intentando crar un archivo con un nombre ya en uso, seleccione otro. El archivo no fue creado"
+    );
+  } else {
+    const newFileCreated = new File(name, metadata, content);
+    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log(">>>>>>>>>>>>>>>File created:<<<<<<<<<<<<<<<");
+    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log("                                           ");
+    console.log("                                           ");
+    console.log(`Name: ${newFileCreated.showName()}`);
+    console.log(`En la ruta (curentPath): ${currentPath}`);
+    console.log(`En la ruta (en constructor): ${newFileCreated.showPath()}`);
+    console.log("                                           ");
+    console.log("                                           ");
+    return currentFolder.addToComposite(newFileCreated);
+  }
 };
 
 const createFolder = (argvs) => {
@@ -43,26 +62,33 @@ const createFolder = (argvs) => {
     path: currentPath,
   };
 
-  const newFolder = new Folder(name, [], metadata);
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
-  console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-  console.log("                                           ");
-  console.log("                                           ");
-  console.log(`Name: ${newFolder.showName()}`);
-  console.log(`En la ruta (curentPath): ${currentPath}`);
-  console.log(`En la ruta (en constructor): ${newFolder.showPath()}`);
-  console.log("                                           ");
-  console.log("                                           ");
+  const folderExist = duplicateValidator("folder", name);
+  if (folderExist) {
+    return console.log(
+      "Esta intentando crar una carpeta con un nombre ya en uso, seleccione otro. La carpeta no fue creada"
+    );
+  } else {
+    const newFolder = new Folder(name, [], metadata);
+    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
+    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log("                                           ");
+    console.log("                                           ");
+    console.log(`Name: ${newFolder.showName()}`);
+    console.log(`En la ruta (curentPath): ${currentPath}`);
+    console.log(`En la ruta (en constructor): ${newFolder.showPath()}`);
+    console.log("                                           ");
+    console.log("                                           ");
+  
+    return currentFolder.addToComposite(newFolder);
+  }
 
-  return currentFolder.addToComposite(newFolder);
 };
 
 const selectFolder = (argvs) => {
   if (argvs.length === 1) {
     currentFolder = mainFolder;
     // currentPath = currentFolder.showPath();
-
   } else {
     const folderDestination = argvs[1];
     const listOfcomposite = currentFolder.showComposite();
@@ -76,18 +102,13 @@ const selectFolder = (argvs) => {
     } else {
       parentFolder = currentFolder;
       currentFolder = folderFound[0];
-      // currentPath = currentFolder.showPath();
 
       if (currentPath === "~/") {
         currentPath = `${currentPath + currentFolder.showName()}`;
-        // currentPath = currentFolder.showPath();
       } else {
         currentPath = `${currentPath + "/" + currentFolder.showName()}`;
-        // currentPath = currentFolder.showPath();
       }
-      // console.log(">>>>>>>>>>>>>> CUUURENT PATH EN SELECT FOLDER",currentPath)
-      // currentPath = currentFolder.showPath();
-      console.log(`Usted esta la ruta ${currentPath}`);
+      console.log(`Usted esta la ruta >>> ${currentPath}`);
     }
   }
 };
@@ -96,18 +117,17 @@ const selectFolder = (argvs) => {
 const moveToParentFolder = () => {
   if (currentFolder === mainFolder) {
     currentPath = currentFolder.showPath();
-    console.log(" Usted esta posicionado a la ruta >>>", currentPath)
+    console.log(" Usted esta posicionado a la ruta >>>", currentPath);
   } else if (parentFolder === undefined) {
     currentFolder = mainFolder;
     currentPath = currentFolder.showPath();
-    console.log(" Usted esta posicionado a la ruta >>>", currentPath)
+    console.log(" Usted esta posicionado a la ruta >>>", currentPath);
   } else {
     currentPath = currentFolder.showPath();
     currentFolder = parentFolder;
     parentFolder = undefined;
-    console.log(" Usted esta posicionado a la ruta >>>", currentPath)
+    console.log(" Usted esta posicionado a la ruta >>>", currentPath);
   }
-
 };
 
 // COMMAND $sf
@@ -155,20 +175,15 @@ const showParentFolder = () => {
 
 // COMMAND $ls
 const listContent = () => {
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
+  console.log("");
+  console.log("");
+  console.log("");
+  console.log("USTED ESTA EN >>>>>", currentFolder.showPath());
   console.log(">>>>> SHOWING COMPOSITE OF CURRENT FOLDER");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
+  console.log("");
   console.log(currentFolder.showComposite());
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
+  console.log("");
+  console.log("");
 };
 
 // COMMAND $ls
@@ -218,4 +233,5 @@ module.exports = {
   moveToParentFolder,
   showParentFolder,
   showEnvPath,
+  duplicateValidator,
 };

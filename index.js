@@ -30,7 +30,7 @@ rl.on("line", function (line) {
       controller.listContent();
       break;
     case "sf": /////////////// dev ///////////////
-    controller.showCurrentFolder();
+      controller.showCurrentFolder();
       break;
     case "path": // whereami
       controller.showCurrentPath();

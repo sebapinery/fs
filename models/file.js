@@ -7,7 +7,7 @@ class File {
       path: metadata.path,
       createdAt: `${new Date().toLocaleDateString(
         "es-AR"
-      )} ${new Date().toLocaleTimeString("es-AR")}`,
+      )} - ${new Date().toLocaleTimeString("es-AR")}`,
     };
   }
 
