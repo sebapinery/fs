@@ -9,7 +9,7 @@ const initialMetaData = {
 var mainFolder = new Folder("root", [], initialMetaData);
 var currentFolder = mainFolder;
 var parentFolder;
-var currentPath = initialPath;
+var currentPath = currentFolder.showPath();
 
 const showPath = (currentPath) => {
   console.log(currentPath);
@@ -61,6 +61,8 @@ const createFolder = (argvs) => {
 const selectFolder = (argvs) => {
   if (argvs.length === 1) {
     currentFolder = mainFolder;
+    // currentPath = currentFolder.showPath();
+
   } else {
     const folderDestination = argvs[1];
     const listOfcomposite = currentFolder.showComposite();
@@ -74,32 +76,38 @@ const selectFolder = (argvs) => {
     } else {
       parentFolder = currentFolder;
       currentFolder = folderFound[0];
+      // currentPath = currentFolder.showPath();
 
       if (currentPath === "~/") {
         currentPath = `${currentPath + currentFolder.showName()}`;
+        // currentPath = currentFolder.showPath();
       } else {
         currentPath = `${currentPath + "/" + currentFolder.showName()}`;
+        // currentPath = currentFolder.showPath();
       }
       // console.log(">>>>>>>>>>>>>> CUUURENT PATH EN SELECT FOLDER",currentPath)
+      // currentPath = currentFolder.showPath();
       console.log(`Usted esta la ruta ${currentPath}`);
     }
   }
 };
 
+// COMMAND $cd..
 const moveToParentFolder = () => {
-  console.log("SALE POR ACA");
-  if (parentFolder === mainFolder) {
+  if (currentFolder === mainFolder) {
+    currentPath = currentFolder.showPath();
+    console.log(" Usted esta posicionado a la ruta >>>", currentPath)
+  } else if (parentFolder === undefined) {
+    currentFolder = mainFolder;
+    currentPath = currentFolder.showPath();
+    console.log(" Usted esta posicionado a la ruta >>>", currentPath)
+  } else {
+    currentPath = currentFolder.showPath();
     currentFolder = parentFolder;
     parentFolder = undefined;
-    currentPath = currentFolder.showPath();
-
-    console.log("Esta en el nivel superior IGUAL A MAIN");
-  } else if (parentFolder) {
-    currentFolder = parentFolder;
-    currentPath = currentFolder.showPath();
-  } else if (!parentFolder) {
-    console.log("Esta en el nivel superior NO HAY PARENT");
+    console.log(" Usted esta posicionado a la ruta >>>", currentPath)
   }
+
 };
 
 // COMMAND $sf
@@ -118,7 +126,7 @@ const showCurrentPath = () => {
   console.log("                                 ");
   console.log("                                 ");
   console.log("                                 ");
-  console.log(">>>>> SHOWING PARENT PATH");
+  console.log(">>>>> SHOWING CURRENT PATH");
   console.log("                                 ");
   console.log("                                 ");
   console.log("                                 ");
