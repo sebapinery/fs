@@ -17,7 +17,7 @@ rl.on("line", function (line) {
     case "cd..": //
       controller.moveToParentFolder();
       break;
-    case "cd":
+    case "cd": //
       controller.selectFolder(argvs);
       break;
     case "cat": // create_file
@@ -30,7 +30,7 @@ rl.on("line", function (line) {
       controller.listContent();
       break;
     case "sf": /////////////// dev ///////////////
-      controller.showCurrentFolder();
+    controller.showCurrentFolder();
       break;
     case "path": // whereami
       controller.showCurrentPath();
