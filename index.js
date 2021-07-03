@@ -38,6 +38,9 @@ rl.on("line", function (line) {
     case "metadata": // metadata + name
       controller.showMetadata(argvs);
       break;
+    case "rm": // destroy name -type?
+      controller.deleteElement(argvs);
+      break;
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -48,7 +51,7 @@ rl.on("line", function (line) {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     case "find": //
-      controller.finder(argvs);
+      console.log(controller.finder(argvs));
       break;
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -59,10 +62,30 @@ rl.on("line", function (line) {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    case "rm": // destroy name -type?
-      controller.deleteElement(argvs);
+    case "users": //
+      controller.getAllUsers();
       break;
-    case "exit": /////////////// dev ///////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    case "cu": // TIENE QUE SER $whoami
+      controller.getCurrentUser();
+      break;
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    case "role": //     
+      controller.checkMyRole();
+      break;
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    case "exit":
+      console.clear();
+      console.log("Gracias que tengas un buen dia!");
+      console.log("");
+      console.log("");
+      console.log("");
       process.exit(0);
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
@@ -71,7 +94,11 @@ rl.on("line", function (line) {
   rl.setPrompt(prefix, prefix.length);
   rl.prompt();
 }).on("close", function () {
+  console.clear();
   console.log("Gracias que tengas un buen dia!");
+  console.log("");
+  console.log("");
+  console.log("");
   process.exit(0);
 });
 console.clear();

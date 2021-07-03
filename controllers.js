@@ -1,26 +1,55 @@
 var Folder = require("./models/folder");
 var File = require("./models/file");
 var User = require("./models/user");
+var Group = require("./models/userGroup");
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+// ROLES ID:
+// GHEST = 1 // READ ONLY
+// NORMAL = 2
+// ADMIN = 3
+
+var superAdmin = new User("admin", "admin", { roleId: 3 });
+var ghestUser = new User("ghest", "1234", { roleId: 1 });
+var normalUser = new User("normal", "1234", { roleId: 2 });
+
+var allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
+
+var currentUser = superAdmin;
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 
 const initialPath = "~/";
 const initialMetaData = {
   path: initialPath,
 };
 
-// ROLES ID:
-// ADMIN = 1
-// READ_ONLY = 2
-// GHEST = 0
-
-var superAdmin = new User("admin", "admin", { roleId: 1 });
-var ghestUser = newUser("ghest", "1234", { roleId: 0 });
-
-var currentUser = superAdmin;
-
 var mainFolder = new Folder("root", [], initialMetaData);
 var currentFolder = mainFolder;
 var parentFolder;
 var currentPath = currentFolder.showPath();
+
+const getAllUsers = () => {
+  const usersFound = allUsers.showComposite();
+  console.log(usersFound);
+};
+
+const getCurrentUser = () => {
+  console.log(currentUser);
+};
+
+const checkMyRole = () => {
+  const roleId = currentUser.showRoleId();
+  // console.log(roleId);
+  return roleId;
+};
 
 const existElement = (name, type) => {
   let existFile;
@@ -100,6 +129,11 @@ const indexFinder = (element) => {
 const deleteElement = (argvs) => {
   const [_, name, type] = argvs;
 
+  if (checkMyRole() < 2)
+    return console.log(
+      `No tiene los permisos necesarios para realizar esta accion.`
+    );
+
   if (argvs.length === 1)
     return console.log("Ingrese un nombre luego de destroy");
   let elementFound = finder(argvs);
@@ -137,7 +171,14 @@ const createFile = (argvs) => {
   if (nameUsed) {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
+    if (checkMyRole() < 2)
+      return console.log(
+        `No tiene los permisos necesarios para realizar esta accion.`
+      );
+
     const newFileCreated = new File(name, metadata, content);
+    currentFolder.addToComposite(newFileCreated);
+
     console.log("                                           ");
     console.log("-------------------------------------------");
     console.log("------------ Archivo creado ---------------");
@@ -149,8 +190,7 @@ const createFile = (argvs) => {
     console.log(`El contenido del nuevo archivo es:`);
     console.log(newFileCreated.showContent());
     console.log("                                           ");
-    console.log("                                           ");
-    return currentFolder.addToComposite(newFileCreated);
+    return true;
   }
 };
 
@@ -165,7 +205,13 @@ const createFolder = (argvs) => {
   if (nameUsed) {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
+    if (checkMyRole() < 2)
+    return console.log(
+      `No tiene los permisos necesarios para realizar esta accion.`
+    );
+
     const newFolder = new Folder(name, [], metadata);
+    currentFolder.addToComposite(newFolder);
     console.log("-------------------------------------------");
     console.log("------------ Carpeta creada ---------------");
     console.log("-------------------------------------------");
@@ -176,13 +222,13 @@ const createFolder = (argvs) => {
     console.log("                                           ");
     console.log("                                           ");
 
-    return currentFolder.addToComposite(newFolder);
+    return true;
   }
 };
 
 // COMMAND $cd + nameFolderDestination
 const selectFolder = (argvs) => {
-  const name = argvs[1];
+  const [_, name] = argvs;
   if (argvs.length === 1) {
     currentFolder = mainFolder;
   } else {
@@ -286,24 +332,6 @@ const listContent = () => {
   });
 };
 
-// COMMAND $env
-const showEnvPath = () => {
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log(">>>>> SHOWING PATH IN ENV VARIABLE");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log(process.env.path);
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-};
-
 // COMMAND $show + name
 const showFile = (argvs) => {
   const [_, name] = argvs;
@@ -341,25 +369,26 @@ const showMetadata = (argvs) => {
 };
 
 module.exports = {
-  // showPath,
-  // indexFinder,
   createFile,
   createFolder,
   selectFolder,
-  mainFolder,
-  currentFolder,
-  parentFolder,
-  currentPath,
+  // mainFolder,
+  // currentFolder,
+  // parentFolder,
+  // currentPath,
   showFile,
   showCurrentFolder,
   listContent,
   showCurrentPath,
   moveToParentFolder,
   showParentFolder,
-  showEnvPath,
   showMetadata,
   finder,
-  // isDuplicated,
-  // deleteItem,
   deleteElement,
+  ////////////////////////
+  //////// USERS /////////
+  ////////////////////////
+  getAllUsers,
+  getCurrentUser,
+  checkMyRole,
 };
