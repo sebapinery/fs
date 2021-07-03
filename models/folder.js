@@ -10,7 +10,7 @@ class Folder {
     };
     this.composite = composite;
   }
-  showDataCreated(){
+  showDataCreated() {
     return this.metadata.createdAt;
   }
 
@@ -31,17 +31,15 @@ class Folder {
   }
 
   showComposite() {
-    // console.log("SHOW COMPOSITE ");
     return this.composite;
   }
 
   addToComposite(element) {
     this.composite.push(element);
-    // return this.composite;
   }
 
-  removeInComposite(index){
-    return this.composite.slice(index, 1)
+  removeInComposite(index) {
+    return this.composite.splice(index, 1);
   }
 
   print() {

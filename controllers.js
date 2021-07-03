@@ -37,12 +37,8 @@ const isUnique = (name) => {
     .filter((content) => content.showName() === name);
 
   if (qtyOfFilesSameName.length > 1) {
-    console.log(
-      "<<<<<<<<<<<<<<<<<<<<<<< Nombre duplicado >>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    );
     return false;
   } else if (qtyOfFilesSameName.length === 0) {
-    // console.log(`El archivo con nombre "${name}" no existe`)
     return false;
   } else {
     return true;
@@ -55,7 +51,7 @@ const finder = (argvs) => {
   const exist = existElement(name, type);
   const unique = isUnique(name);
   // console.log(unique)
-  if (!exist) return console.log(`No existe elemento con el nombre "${name}"`);
+  if (!exist) return false;
   if (!unique && !type)
     return console.log(
       `El nombre "${name}" pertenecea a un archivo y a una carpeta. Utilice como tercer argumento el tipo de archivo que quiere ver `
@@ -82,23 +78,42 @@ const finder = (argvs) => {
   }
 };
 
-// const indexFinder = (name) => {
-//   // const name = argvs[1];
+const indexFinder = (element) => {
+  const folderContent = currentFolder.showComposite();
 
-//   const fileFound = finder(name);
-//   if (!fileFound) {
-//     console.log("El archivo no existe");
-//   } else {
-//     const folderContent = currentFolder.showComposite();
-//     const index = folderContent.indexOf(fileFound);
-//     console.log(index);
-//     return index;
-//   }
-// };
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
+  const index = folderContent.indexOf(element);
+  if (index === -1) return false;
+  return index;
+};
+
+const deleteElement = (argvs) => {
+  const [_, name, type] = argvs;
+
+  if (argvs.length === 1)
+    return console.log("Ingrese un nombre luego de destroy");
+  let elementFound = finder(argvs);
+  if (!elementFound)
+    return console.log(`El archivo con nombre "${name}" no existe`);
+  if (!isUnique(name) && !type)
+    return console.log(
+      `Esta intentando borrar un elemento con el nombre "${name} que pertenece a un archivo y a una carpeta. Indique como tercer paramentro el tipo de elemento que quiere eliminar."`
+    );
+
+  if (!type) {
+    let indexOfElement = indexFinder(elementFound);
+    console.log(
+      `Eliminado el elemento: "${elementFound.showName()}" de tipo "${elementFound.showType()}"`
+    );
+    currentFolder.removeInComposite(indexOfElement);
+  } else {
+    elementFound = finder(argvs);
+    indexOfElement = indexFinder(elementFound);
+    console.log(
+      `Eliminado el elemento: "${elementFound.showName()}" de tipo "${elementFound.showType()}"`
+    );
+    currentFolder.removeInComposite(indexOfElement);
+  }
+};
 
 // COMMAND $cat //// debe ser $create_file
 const createFile = (argvs) => {
@@ -107,19 +122,21 @@ const createFile = (argvs) => {
   const metadata = {
     path: currentPath,
   };
-  const fileExist = existElement(name, "file");
-  if (fileExist) {
+  const nameUsed = existElement(name, "file");
+  if (nameUsed) {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
     const newFileCreated = new File(name, metadata, content);
-    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-    console.log(">>>>>>>>>>>>>>>File created:<<<<<<<<<<<<<<<");
-    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log("                                           ");
+    console.log("-------------------------------------------");
+    console.log("------------ Archivo creado ---------------");
+    console.log("-------------------------------------------");
     console.log("                                           ");
     console.log("                                           ");
-    console.log(`Name: ${newFileCreated.showName()}`);
-    console.log(`En la ruta (curentPath): ${currentPath}`);
-    console.log(`En la ruta (en constructor): ${newFileCreated.showPath()}`);
+    console.log(`Nombre del nuevo archivo: "${newFileCreated.showName()}"`);
+    console.log(`Crado en la ruta: ${currentPath}`);
+    console.log(`El contenido del nuevo archivo es:`)
+    console.log(newFileCreated.showContent())
     console.log("                                           ");
     console.log("                                           ");
     return currentFolder.addToComposite(newFileCreated);
@@ -133,19 +150,18 @@ const createFolder = (argvs) => {
     path: currentPath,
   };
 
-  const folderExist = existElement(name, "folder");
-  if (folderExist) {
+  const nameUsed = existElement(name, "folder");
+  if (nameUsed) {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
     const newFolder = new Folder(name, [], metadata);
-    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
-    console.log(">>>>>>>>>>>>>>Folder created:<<<<<<<<<<<<<<");
-    console.log(">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<");
+    console.log("-------------------------------------------");
+    console.log("------------ Carpeta creada ---------------");
+    console.log("-------------------------------------------");
     console.log("                                           ");
     console.log("                                           ");
-    console.log(`Name: ${newFolder.showName()}`);
-    console.log(`En la ruta (curentPath): ${currentPath}`);
-    console.log(`En la ruta (en constructor): ${newFolder.showPath()}`);
+    console.log(`Nombre de la nueva carpeta: "${newFolder.showName()}"`);
+    console.log(`Creado en la ruta: ${currentPath}`);
     console.log("                                           ");
     console.log("                                           ");
 
@@ -177,8 +193,10 @@ const selectFolder = (argvs) => {
       } else {
         currentPath = `${currentPath + "/" + currentFolder.showName()}`;
       }
-      console.log(`Usted esta la ruta >>> ${currentPath}`);
-    }
+    console.log("-------------------------------------------");
+    console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+    console.log("-------------------------------------------");
+  }
   }
 };
 
@@ -196,26 +214,6 @@ const moveToParentFolder = () => {
     currentFolder = parentFolder;
     parentFolder = undefined;
     console.log(" Usted esta posicionado a la ruta >>>", currentPath);
-  }
-};
-
-const deleteElement = (argvs) => {
-  const [_, name, type] = argvs;
-
-  if (argvs.length === 1)
-    return console.log("Ingrese un nombre luego de destroy");
-  if (!isUnique(name))
-    return console.log(
-      `Esta intentando borrar un elemento con el nombre "${name} que pertenece a un archivo y a una carpeta. Indique como tercer paramentro el tipo de elemento que quiere eliminar."`
-    );
-
-    
-  const find = existElement(name);
-  console.log(!find ? "no se encontro" : find);
-  if (argvs.length === 2) {
-    console.log(" entra al if - igual a 2");
-  } else {
-    console.log(" entra al else - diferente a 2");
   }
 };
 
