@@ -35,8 +35,11 @@ rl.on("line", function (line) {
     case "path": // whereami
       controller.showCurrentPath();
       break;
-    case "show": //
+    case "show": // show + name
       controller.showFile(argvs);
+      break;
+    case "metadata": // metadata + name
+      controller.showMetadata(argvs);
       break;
     // case "file": /////////////// dev ///////////////
     //   console.log(JSON.stringify(mainFolder));
@@ -44,8 +47,14 @@ rl.on("line", function (line) {
     case "env": //
       controller.showEnvPath();
       break;
+    case "find": //
+      controller.isDuplicated(argvs);
+      break;
     case "pf": //
       controller.showParentFolder();
+      break;
+    case "rm": //
+      controller.deleteItem(argvs);
       break;
     case "exit": /////////////// dev ///////////////
       process.exit(0);

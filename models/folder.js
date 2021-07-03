@@ -36,6 +36,10 @@ class Folder {
     // return this.composite;
   }
 
+  removeInComposite(index){
+    return this.composite.slice(index, 1)
+  }
+
   print() {
     return this;
   }
