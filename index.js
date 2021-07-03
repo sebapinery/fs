@@ -1,4 +1,4 @@
-// #!/usr/bin/env node
+#!/usr/bin/env node
 
 var File = require("./models/file");
 var Folder = require("./models/folder");
@@ -44,17 +44,24 @@ rl.on("line", function (line) {
     // case "file": /////////////// dev ///////////////
     //   console.log(JSON.stringify(mainFolder));
     //   break;
-    case "env": //
-      controller.showEnvPath();
-      break;
+    // case "env": //
+    //   controller.showEnvPath();
+    //   break;
+      //////////////////////////////////////////////
+      //////////////////////////////////////////////
+      //////////////////////////////////////////////
     case "find": //
-      controller.isDuplicated(argvs);
+      controller.finder(argvs);
       break;
+      //////////////////////////////////////////////
+      //////////////////////////////////////////////
+      //////////////////////////////////////////////
+
     case "pf": //
       controller.showParentFolder();
       break;
-    case "rm": //
-      controller.deleteItem(argvs);
+    case "rm": // destroy name -type?
+      controller.deleteElement(argvs);
       break;
     case "exit": /////////////// dev ///////////////
       process.exit(0);

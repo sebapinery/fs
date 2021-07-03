@@ -10,6 +10,10 @@ class Folder {
     };
     this.composite = composite;
   }
+  showDataCreated(){
+    return this.metadata.createdAt;
+  }
+
   showType() {
     return this.metadata.type;
   }

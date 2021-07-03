@@ -11,6 +11,10 @@ class File {
     };
   }
 
+  showDataCreated(){
+    return this.metadata.createdAt;
+  }
+
   showContent(){
     return this.content;
   }
