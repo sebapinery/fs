@@ -1,10 +1,21 @@
 var Folder = require("./models/folder");
 var File = require("./models/file");
+var User = require("./models/user");
 
 const initialPath = "~/";
 const initialMetaData = {
   path: initialPath,
 };
+
+// ROLES ID:
+// ADMIN = 1
+// READ_ONLY = 2
+// GHEST = 0
+
+var superAdmin = new User("admin", "admin", { roleId: 1 });
+var ghestUser = newUser("ghest", "1234", { roleId: 0 });
+
+var currentUser = superAdmin;
 
 var mainFolder = new Folder("root", [], initialMetaData);
 var currentFolder = mainFolder;
@@ -135,8 +146,8 @@ const createFile = (argvs) => {
     console.log("                                           ");
     console.log(`Nombre del nuevo archivo: "${newFileCreated.showName()}"`);
     console.log(`Crado en la ruta: ${currentPath}`);
-    console.log(`El contenido del nuevo archivo es:`)
-    console.log(newFileCreated.showContent())
+    console.log(`El contenido del nuevo archivo es:`);
+    console.log(newFileCreated.showContent());
     console.log("                                           ");
     console.log("                                           ");
     return currentFolder.addToComposite(newFileCreated);
@@ -193,10 +204,10 @@ const selectFolder = (argvs) => {
       } else {
         currentPath = `${currentPath + "/" + currentFolder.showName()}`;
       }
-    console.log("-------------------------------------------");
-    console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
-    console.log("-------------------------------------------");
-  }
+      console.log("-------------------------------------------");
+      console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+      console.log("-------------------------------------------");
+    }
   }
 };
 
