@@ -334,5 +334,5 @@ module.exports = {
   showEnvPath,
   showMetadata,
   isDuplicated,
-  deleteItem,
+  // deleteItem,
 };
