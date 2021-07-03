@@ -17,6 +17,9 @@ class User{
     showPassword(){
         return this.password;
     }
+    editPassword(newPassword){
+        return this.password = newPassword;
+    }
     showMetadata(){
         return this.metadata;
     }
@@ -27,3 +30,5 @@ class User{
         return this.metadata.createdAt;
     }
 }
+
+module.exports = User;
