@@ -51,6 +51,12 @@ const checkMyRole = () => {
   return roleId;
 };
 
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
 const existElement = (name, type) => {
   let existFile;
   if (!type) {
@@ -206,9 +212,9 @@ const createFolder = (argvs) => {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
     if (checkMyRole() < 2)
-    return console.log(
-      `No tiene los permisos necesarios para realizar esta accion.`
-    );
+      return console.log(
+        `No tiene los permisos necesarios para realizar esta accion.`
+      );
 
     const newFolder = new Folder(name, [], metadata);
     currentFolder.addToComposite(newFolder);
@@ -231,6 +237,11 @@ const selectFolder = (argvs) => {
   const [_, name] = argvs;
   if (argvs.length === 1) {
     currentFolder = mainFolder;
+    currentPath = currentFolder.showPath();
+    console.log("-------------------------------------------");
+    console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+    console.log("-------------------------------------------");
+    return
   } else {
     const folderDestination = name;
     const listOfcomposite = currentFolder.showComposite();
@@ -242,6 +253,9 @@ const selectFolder = (argvs) => {
     if (folderFound.length === 0) {
       console.log(`La carpeta con nombre "${name}" no existe`);
     } else {
+      if (folderFound[0].showType() !== "folder")
+        return console.log(`La carpeta con nombre "${name}" no existe`);
+
       parentFolder = currentFolder;
       currentFolder = folderFound[0];
 
@@ -261,16 +275,22 @@ const selectFolder = (argvs) => {
 const moveToParentFolder = () => {
   if (currentFolder === mainFolder) {
     currentPath = currentFolder.showPath();
-    console.log(" Usted esta posicionado a la ruta >>>", currentPath);
+    console.log("-------------------------------------------");
+    console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+    console.log("-------------------------------------------");
   } else if (parentFolder === undefined) {
     currentFolder = mainFolder;
     currentPath = currentFolder.showPath();
-    console.log(" Usted esta posicionado a la ruta >>>", currentPath);
+    console.log("-------------------------------------------");
+    console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+    console.log("-------------------------------------------");
   } else {
     currentPath = currentFolder.showPath();
     currentFolder = parentFolder;
     parentFolder = undefined;
-    console.log(" Usted esta posicionado a la ruta >>>", currentPath);
+    console.log("-------------------------------------------");
+    console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+    console.log("-------------------------------------------");
   }
 };
 
