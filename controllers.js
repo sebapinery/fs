@@ -292,24 +292,19 @@ const selectFolder = (argvs) => {
     console.log("-------------------------------------------");
     return;
   } else {
-    const folderDestination = name;
-    const listOfcomposite = currentFolder.showComposite();
-
-    const folderFound = listOfcomposite.filter(
-      (e) => e.name == folderDestination
-    );
+    const folderFound = finder([_, name, "folder"]);
 
     if (folderFound.length === 0) {
       console.log(`La carpeta con nombre "${name}" no existe`);
       return;
     } else {
-      if (folderFound[0].showType() !== "folder") {
+      if (folderFound.showType() !== "folder") {
         console.log(`La carpeta con nombre "${name}" no existe`);
         return;
       }
 
       parentFolder = currentFolder;
-      currentFolder = folderFound[0];
+      currentFolder = folderFound;
 
       if (currentPath === "~/") {
         currentPath = `${currentPath + currentFolder.showName()}`;

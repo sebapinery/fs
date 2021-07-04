@@ -6,7 +6,6 @@ const controller = require("./controllers");
 const readline = require("readline");
 const rl = readline.createInterface(process.stdin, process.stdout);
 const prefix = `FileSystem> `;
-// prefix = `${controller.showCurrentPath()}`
 
 rl.on("line", function (line) {
   const argvs = line.split(" ");
@@ -39,6 +38,19 @@ rl.on("line", function (line) {
     case "rm": // destroy name -type?
       controller.deleteElement(argvs);
       break;
+    case "cu": // TIENE QUE SER $whoami
+      controller.getCurrentUser();
+      break;
+    case "create": // $create_user
+      controller.createUser(argvs);
+      break;
+    case "exit":
+      console.clear();
+      console.log("Gracias que tengas un buen dia!");
+      console.log("");
+      console.log("");
+      console.log("");
+      process.exit(0);
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -69,28 +81,12 @@ rl.on("line", function (line) {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    case "cu": // TIENE QUE SER $whoami
-      controller.getCurrentUser();
-      break;
-    case "create": //
-      controller.createUser(argvs);
-      break;
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     case "role": //
       controller.checkMyRole();
       break;
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    case "exit":
-      console.clear();
-      console.log("Gracias que tengas un buen dia!");
-      console.log("");
-      console.log("");
-      console.log("");
-      process.exit(0);
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
       break;
