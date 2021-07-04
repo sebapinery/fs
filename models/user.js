@@ -1,13 +1,15 @@
 class User {
   constructor(name, password, metadata) {
+    const date = new Date()
     this.name = name;
     this.password = password;
     this.metadata = {
       type: "user",
       roleId: metadata.roleId,
-      createdAt: `${new Date().toLocaleDateString(
+      createdAt: `${date.toLocaleDateString(
         "es-AR"
-      )} - ${new Date().toLocaleTimeString("es-AR")}`,
+      )} - ${date.toLocaleTimeString("es-AR")}`,
+      numDate: date.getTime()
     };
   }
 

@@ -2,6 +2,7 @@ var Folder = require("./models/folder");
 var File = require("./models/file");
 var User = require("./models/user");
 var Group = require("./models/userGroup");
+var { encode, decode } = require("./security");
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -19,9 +20,9 @@ const user_roles = {
   admin: 3,
 };
 
-var superAdmin = new User("admin", "admin", { roleId: 3 });
-var ghestUser = new User("ghest", "1234", { roleId: 1 });
-var normalUser = new User("normal", "1234", { roleId: 2 });
+var superAdmin = new User("admin", encode("admin"), { roleId: 3 });
+var ghestUser = new User("ghest", encode("1234"), { roleId: 1 });
+var normalUser = new User("normal", encode("1234"), { roleId: 2 });
 
 var allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
 
@@ -77,18 +78,19 @@ const createUser = (argvs) => {
     roleId: user_roles[roleSelected],
   };
 
+  if (flag !== "-role") {
+    console.log(
+      `La opcion "${flag}" no es valida. Utilice "-role=" para asignar un tipo de rol`
+    );
+    return;
+  }
   if (metadata.roleId === undefined) {
     console.log(`El rol seleccionado no es existe.`);
     console.log("");
     console.log(`Roles validos son: 'admin', 'normal' y 'read_only'`);
     console.log("");
-
     return;
   }
-
-  // console.log("Userename: ",username)
-  // console.log("Password: ",password)
-  // console.log("flag: ",roleSelected)
 
   const userFound = userExists(username);
 
@@ -97,7 +99,9 @@ const createUser = (argvs) => {
       `El nombre ${username} ya esta en uso. Por favor utilice otro nombre de usuario.`
     );
   } else {
-    const newUser = new User(username, password, metadata);
+    const encryptedPassword = encode(password);
+
+    const newUser = new User(username, encryptedPassword, metadata);
     allUsers.addToComposite(newUser);
     console.log(`Se ha creado un nuevo usuaario`);
     console.log(newUser);
