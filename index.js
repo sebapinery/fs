@@ -87,6 +87,9 @@ rl.on("line", function (line) {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
+    case "destroy_user":
+      controller.deleteUser(argvs);
+      break;
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
       break;

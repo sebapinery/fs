@@ -10,7 +10,6 @@ const normalUser = new User("normal", "1234", { roleId: 2 });
 const allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
 var currentUser = ghestUser;
 
-
 const initialPath = "~/";
 const initialMetaData = {
   path: initialPath,
@@ -48,6 +47,7 @@ const userExists = (userName) => {
 
 const createUser = (argvs) => {
   const [_, username, password, roleFlag] = argvs;
+  if(checkMyRole() < 2) return console.log(`No posee los permisos para realizar esta accion`)
 
   const flag = roleFlag.slice(0, 5).trim();
   const roleSelected = roleFlag.slice(6).trim();
@@ -64,7 +64,7 @@ const createUser = (argvs) => {
   if (metadata.roleId === undefined) {
     console.log(`El rol seleccionado no es existe.`);
     console.log("");
-    console.log(`Roles validos son: 'admin', 'normal' y 'read_only'`);
+    console.log(`Roles validos son: 'super', 'regular' y 'read_only'`);
     console.log("");
     return;
   }
@@ -79,7 +79,7 @@ const createUser = (argvs) => {
     const newUser = new User(username, password, metadata);
     allUsers.addToComposite(newUser);
     console.log(`Se ha creado un nuevo usuaario`);
-    console.log(newUser);
+    console.log(newUser.print());
   }
 };
 
@@ -96,6 +96,23 @@ const login = (argvs) => {
     console.log("Login correcto!");
     currentUser = userFound;
   }
+};
+
+const deleteUser = (argvs) => {
+  const [_, username] = argvs;
+
+  if(checkMyRole() < 2) return console.log(`No posee los permisos para realizar esta accion`)
+
+  const existUser = userExists(username);
+  if (!existUser) return console.log(`El nombre ${username} no existe`);
+
+  const userIndex = indexFinder(existUser, "users");
+
+  console.log(
+    `Eliminado el usuario: "${username}"`
+  );
+  allUsers.removeInComposite(userIndex);
+  return true;
 };
 
 /////////////////////////////////////////////////////////////////
@@ -171,12 +188,20 @@ const finder = (argvs) => {
   }
 };
 
-const indexFinder = (element) => {
+const indexFinder = (element, where) => {
   const folderContent = currentFolder.showComposite();
 
-  const index = folderContent.indexOf(element);
-  if (index === -1) return false;
-  return index;
+  if (!where) {
+    const index = folderContent.indexOf(element);
+    if (index === -1) return false;
+    return index;
+  }
+  if (where === "users") {
+    const index = allUsers.showComposite().indexOf(element);
+    if (index === -1) return false;
+    return index;
+  }
+  return false;
 };
 
 const deleteElement = (argvs) => {
@@ -254,7 +279,7 @@ const createFolder = (argvs) => {
   const name = argvs[1];
   const metadata = {
     path: currentPath,
-    parentFolder: !parentFolder ? mainFolder : parentFolder
+    parentFolder: !parentFolder ? mainFolder : parentFolder,
   };
 
   const nameUsed = existElement(name, "folder");
@@ -443,10 +468,6 @@ module.exports = {
   createFile,
   createFolder,
   selectFolder,
-  // mainFolder,
-  // currentFolder,
-  // parentFolder,
-  // currentPath,
   showFile,
   showCurrentFolder,
   listContent,
@@ -459,10 +480,10 @@ module.exports = {
   ////////////////////////
   //////// USERS /////////
   ////////////////////////
-  // user_roles,
   getAllUsers,
   getCurrentUser,
   checkMyRole,
   createUser,
   login,
+  deleteUser
 };
