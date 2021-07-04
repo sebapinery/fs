@@ -90,6 +90,12 @@ rl.on("line", function (line) {
     case "destroy_user":
       controller.deleteUser(argvs);
       break;
+    case "update_password": //
+      controller.updatePassword(argvs);
+      break;
+    case "logout": //
+      controller.logout();
+      break;
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
       break;

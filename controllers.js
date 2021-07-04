@@ -115,11 +115,22 @@ const deleteUser = (argvs) => {
   return true;
 };
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
+const updatePassword = (argvs) => {
+  const [_, newPassword] = argvs;
+
+  if(checkMyRole() < 2) return console.log(`No tiene permisos para realizar esta accion`);
+
+  const updateSuccess = currentUser.editPassword(newPassword);
+  if(!updateSuccess) return console.log(`Ocurrio un error actualizando la contraseña, por favor intente nuevamente`)
+
+  console.log("Contraseña actualziada con exito")
+
+}
+
+const logout = () => {
+  console.log("Usted se ha deslogueado con exito.")
+  currentUser = ghestUser;
+}
 
 const existElement = (name, type) => {
   let existFile;
@@ -182,8 +193,6 @@ const finder = (argvs) => {
   if (!elementFound) {
     return false;
   } else {
-    // console.log("////////// DEV /////////")
-    // console.log(elementFound.print())
     return elementFound;
   }
 };
@@ -241,7 +250,11 @@ const deleteElement = (argvs) => {
 
 // COMMAND $cat //// debe ser $create_file
 const createFile = (argvs) => {
-  const name = argvs[1];
+  if (checkMyRole() < 2)
+    return console.log(
+      `No tiene los permisos necesarios para realizar esta accion.`
+    );
+  const [_, name] = argvs;
   const content = argvs.slice(2).join(" ");
   const metadata = {
     path: currentPath,
@@ -250,10 +263,6 @@ const createFile = (argvs) => {
   if (nameUsed) {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
-    if (checkMyRole() < 2)
-      return console.log(
-        `No tiene los permisos necesarios para realizar esta accion.`
-      );
 
     const newFileCreated = new File(name, metadata, content);
     currentFolder.addToComposite(newFileCreated);
@@ -415,6 +424,7 @@ const listContent = () => {
 // COMMAND $show + name
 const showFile = (argvs) => {
   const [_, name] = argvs;
+  if(!name) return console.log("Ingrese el nombre del archivo que quiere ver")
   const fileExist = existElement(name, "file");
 
   if (!fileExist) {
@@ -441,6 +451,7 @@ const showFile = (argvs) => {
 // COMMAND $metadata + name
 const showMetadata = (argvs) => {
   const [_, name] = argvs;
+  if(!name) return console.log("Ingrese el nombre del archivo que quiere ver")
   const fileExist = existElement(name, "file");
 
   if (!fileExist) {
@@ -485,5 +496,7 @@ module.exports = {
   checkMyRole,
   createUser,
   login,
-  deleteUser
+  deleteUser,
+  updatePassword,
+  logout
 };

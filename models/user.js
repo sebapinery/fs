@@ -36,20 +36,14 @@ class User {
   }
 
   editPassword(newPassword) {
-    return (this.password = newPassword);
+    this.password = encode(newPassword)
+    return true;
   }
-  editRoleId(newRoleId) {
-    return (this.metadata.roleId = newRoleId);
-  }
-  // showMetadata() {
-  //   return this.metadata;
-  // }
+
   showRoleId() {
     return this.metadata.roleId;
   }
-  // showCreatedAt() {
-  //   return this.metadata.createdAt;
-  // }
+
   print() {
     const roleId = Object.keys(user_roles);
     const finded = Object.values(user_roles).indexOf(this.metadata.roleId);
