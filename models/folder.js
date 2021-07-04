@@ -4,12 +4,18 @@ class Folder {
     this.metadata = {
       type: "folder",
       path: metadata.path,
+      parentFoler: metadata.parentFolder,
       createdAt: `${new Date().toLocaleDateString(
         "es-AR"
       )} - ${new Date().toLocaleTimeString("es-AR")}`,
     };
     this.composite = composite;
   }
+
+  showParentFolder(){
+    return this.metadata.parentFoler;
+  }
+
   showDataCreated() {
     return this.metadata.createdAt;
   }

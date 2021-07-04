@@ -254,6 +254,7 @@ const createFolder = (argvs) => {
   const name = argvs[1];
   const metadata = {
     path: currentPath,
+    parentFolder: !parentFolder ? mainFolder : parentFolder
   };
 
   const nameUsed = existElement(name, "folder");
@@ -334,7 +335,7 @@ const moveToParentFolder = () => {
   } else {
     currentPath = currentFolder.showPath();
     currentFolder = parentFolder;
-    parentFolder = undefined;
+    parentFolder = currentFolder.showParentFolder();
     console.log("-------------------------------------------");
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
