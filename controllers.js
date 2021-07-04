@@ -27,10 +27,18 @@ var currentPath = currentFolder.showPath();
 
 const getAllUsers = () => {
   const usersFound = allUsers.showComposite();
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  usersFound.forEach(u => console.log(u.print()))
+  // /////////////////////////////////////////////////////
+  // /////////////////////////////////////////////////////
+  usersFound.forEach(u => console.log(u))
   // console.log(usersFound);
+  
+
+
+
+
+  
+
+
 };
 
 const getCurrentUser = () => {
@@ -502,22 +510,22 @@ const persistData = (argv) => {
   };
   const stringy = JSON.stringify(content, getCircularReplacer());
 
-  fs.writeFile('data.json', stringy, (e) => {
-    if(e){
-      return console.log(`Error: ${e}`)
+  fs.writeFile("data.json", stringy, (e) => {
+    if (e) {
+      return console.log(`Error: ${e}`);
     }
-  })
+  });
 
   console.log(JSON.parse(stringy));
 };
 
 const load = () => {
-  fs.readFile('data.json', 'utf-8', (error, data) => {
-    if(!error){
-      console.log(JSON.parse(data))
+  fs.readFile("data.json", "utf-8", (error, data) => {
+    if (!error) {
+      console.log(JSON.parse(data));
     }
-  })
-}
+  });
+};
 
 module.exports = {
   createFile,
@@ -547,5 +555,5 @@ module.exports = {
   //////// DATA /////////
   ////////////////////////
   persistData,
-  load
+  load,
 };

@@ -4,13 +4,23 @@
 //   });
 // };
 
-const hash = (passwordEntered, n) => {
-  const password = passwordEntered.trim().split("");
+const crypto = require("crypto");
 
-  return password.reduce(
-    (h, c) => (h = c.charCodeAt(0) + (h << 6) + (h << 16) - h),
-    0
-  ) * n;
+const hash = (passwordEntered) => {
+
+  const secret = "abcdefg";
+  const hash = crypto
+    .createHmac("sha256", secret)
+    .update(passwordEntered)
+    .digest("hex");
+  // console.log("hash: ", hash);
+  return hash;
+
+  const passwordEncrypt = passwordEntered.trim().split("");
+  // return passwordEncrypt.reduce(
+  //   (h, c) => (h = c.charCodeAt(0) + (h << 6) + (h << 16) - h),
+  //   0
+  // );
 };
 
 // const decode = (excryptedPassword) => {

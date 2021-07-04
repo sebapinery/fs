@@ -44,6 +44,18 @@ rl.on("line", function (line) {
     case "create": // $create_user
       controller.createUser(argvs);
       break;
+    case "destroy_user":
+      controller.deleteUser(argvs);
+      break;
+    case "update_password": //
+      controller.updatePassword(argvs);
+      break;
+    case "login": //
+      controller.login(argvs);
+      break;
+    case "logout": //
+      controller.logout();
+      break;
     case "exit":
       console.clear();
       console.log("Gracias que tengas un buen dia!");
@@ -75,9 +87,6 @@ rl.on("line", function (line) {
     case "users": //
       controller.getAllUsers();
       break;
-    case "login": //
-      controller.login(argvs);
-      break;
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -87,18 +96,12 @@ rl.on("line", function (line) {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    case "destroy_user":
-      controller.deleteUser(argvs);
-      break;
-    case "update_password": //
-      controller.updatePassword(argvs);
-      break;
-    case "logout": //
-      controller.logout();
-      break;
     case "persist": //
-    controller.persistData(argvs);
-    break;
+      controller.persistData(argvs);
+      break;
+    case "load": //
+      controller.load();
+      break;
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
       break;
