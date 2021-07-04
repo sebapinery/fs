@@ -1,32 +1,21 @@
 var Folder = require("./models/folder");
 var File = require("./models/file");
-var User = require("./models/user");
+var { User, user_roles } = require("./models/user");
 var Group = require("./models/userGroup");
-var { encode, decode } = require("./security");
+// var { encode } = require("./security");
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 
-// ROLES ID:
-// GHEST = 1 // READ ONLY
-// NORMAL = 2
-// ADMIN = 3
-
-const user_roles = {
-  read_only: 1,
-  normal: 2,
-  admin: 3,
-};
-
-var superAdmin = new User("admin", encode("admin"), { roleId: 3 });
-var ghestUser = new User("ghest", encode("1234"), { roleId: 1 });
-var normalUser = new User("normal", encode("1234"), { roleId: 2 });
+var superAdmin = new User("admin", "admin", { roleId: 3 });
+var ghestUser = new User("ghest", "1234", { roleId: 1 });
+var normalUser = new User("normal", "1234", { roleId: 2 });
 
 var allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
 
-var currentUser = superAdmin;
+var currentUser = ghestUser;
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -49,12 +38,11 @@ const getAllUsers = () => {
 };
 
 const getCurrentUser = () => {
-  console.log(currentUser);
+  return console.log(currentUser.print());
 };
 
 const checkMyRole = () => {
   const roleId = currentUser.showRoleId();
-  // console.log(roleId);
   return roleId;
 };
 
@@ -99,12 +87,25 @@ const createUser = (argvs) => {
       `El nombre ${username} ya esta en uso. Por favor utilice otro nombre de usuario.`
     );
   } else {
-    const encryptedPassword = encode(password);
-
-    const newUser = new User(username, encryptedPassword, metadata);
+    const newUser = new User(username, password, metadata);
     allUsers.addToComposite(newUser);
     console.log(`Se ha creado un nuevo usuaario`);
     console.log(newUser);
+  }
+};
+
+const login = (argvs) => {
+  const [_, username, password] = argvs;
+
+  const userFound = userExists(username);
+  if (!userFound) return console.log(`El nombre ${username} no existe`);
+
+  const validPassword = userFound.comparePassword(password);
+  if (!validPassword) {
+    return console.log(`La contraseña ingresada no es valida`);
+  } else {
+    console.log("Login correcto!");
+    currentUser = userFound;
   }
 };
 
@@ -473,8 +474,10 @@ module.exports = {
   ////////////////////////
   //////// USERS /////////
   ////////////////////////
+  // user_roles,
   getAllUsers,
   getCurrentUser,
   checkMyRole,
   createUser,
+  login,
 };

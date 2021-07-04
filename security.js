@@ -4,10 +4,13 @@ const encode = (password) => {
   });
 };
 
-const decode = (excryptedPassword) => {
-  return excryptedPassword.replace(/.{3}/g, (p) => {
-      return String.fromCharCode(p);
-  });
-};
+// const decode = (excryptedPassword) => {
+//   return excryptedPassword.replace(/.{3}/g, (p) => {
+//       return String.fromCharCode(p);
+//   });
+// };
 
-module.exports = { encode, decode };
+module.exports = { 
+    encode, 
+    // decode 
+};
