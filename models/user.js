@@ -1,5 +1,4 @@
-const { encode } = require("../security");
-// const {user_roles} = require("../controllers")
+const { encode, hash } = require("../security");
 
 const user_roles = {
   read_only: 1,
@@ -8,17 +7,20 @@ const user_roles = {
 };
 
 class User {
+  #password;
+  #randomNum;
+  #numDate;
   constructor(name, password, metadata) {
     const date = new Date();
     this.name = name;
-    this.password = encode(password);
+    this.#randomNum = Math.random();
+    this.#numDate = date.getTime(),
+    this.#password = hash(password, this.#randomNum) * this.#numDate;
     this.metadata = {
-      // type: "user",
       roleId: metadata.roleId,
       createdAt: `${date.toLocaleDateString(
         "es-AR"
       )} - ${date.toLocaleTimeString("es-AR")}`,
-      // numDate: date.getTime(),
     };
   }
 
@@ -27,8 +29,9 @@ class User {
   }
 
   comparePassword(passwordEntered) {
-    const encodedPassword = encode(passwordEntered);
-    if (this.password === encodedPassword) {
+    const encodedPassword =
+      hash(passwordEntered, this.#randomNum) * this.#numDate;
+    if (this.#password === encodedPassword) {
       return true;
     } else {
       return false;
@@ -36,7 +39,7 @@ class User {
   }
 
   editPassword(newPassword) {
-    this.password = encode(newPassword)
+    this.password = hash(newPassword, this.#randomNum) * this.#numDate;
     return true;
   }
 

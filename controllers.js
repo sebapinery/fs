@@ -3,6 +3,11 @@ const File = require("./models/file");
 const { User, user_roles } = require("./models/user");
 const Group = require("./models/userGroup");
 
+const { hash } = require("./security");
+
+const fs = require("fs");
+const path = require("path");
+
 const superAdmin = new User("admin", "admin", { roleId: 3 });
 const ghestUser = new User("ghest", "1234", { roleId: 1 });
 const normalUser = new User("normal", "1234", { roleId: 2 });
@@ -22,7 +27,12 @@ var currentPath = currentFolder.showPath();
 
 const getAllUsers = () => {
   const usersFound = allUsers.showComposite();
-  console.log(usersFound);
+  const shipnow = hash("35583551", 35583551);
+  const encrypted = hash("Me gustaria que mi primer trabajo IT sea en Shipnow", shipnow);
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  usersFound.forEach(u => console.log(u.print()))
+  // console.log(usersFound);
 };
 
 const getCurrentUser = () => {
@@ -47,7 +57,8 @@ const userExists = (userName) => {
 
 const createUser = (argvs) => {
   const [_, username, password, roleFlag] = argvs;
-  if(checkMyRole() < 2) return console.log(`No posee los permisos para realizar esta accion`)
+  if (checkMyRole() < 2)
+    return console.log(`No posee los permisos para realizar esta accion`);
 
   const flag = roleFlag.slice(0, 5).trim();
   const roleSelected = roleFlag.slice(6).trim();
@@ -101,16 +112,15 @@ const login = (argvs) => {
 const deleteUser = (argvs) => {
   const [_, username] = argvs;
 
-  if(checkMyRole() < 2) return console.log(`No posee los permisos para realizar esta accion`)
+  if (checkMyRole() < 2)
+    return console.log(`No posee los permisos para realizar esta accion`);
 
   const existUser = userExists(username);
   if (!existUser) return console.log(`El nombre ${username} no existe`);
 
   const userIndex = indexFinder(existUser, "users");
 
-  console.log(
-    `Eliminado el usuario: "${username}"`
-  );
+  console.log(`Eliminado el usuario: "${username}"`);
   allUsers.removeInComposite(userIndex);
   return true;
 };
@@ -118,19 +128,22 @@ const deleteUser = (argvs) => {
 const updatePassword = (argvs) => {
   const [_, newPassword] = argvs;
 
-  if(checkMyRole() < 2) return console.log(`No tiene permisos para realizar esta accion`);
+  if (checkMyRole() < 2)
+    return console.log(`No tiene permisos para realizar esta accion`);
 
   const updateSuccess = currentUser.editPassword(newPassword);
-  if(!updateSuccess) return console.log(`Ocurrio un error actualizando la contraseña, por favor intente nuevamente`)
+  if (!updateSuccess)
+    return console.log(
+      `Ocurrio un error actualizando la contraseña, por favor intente nuevamente`
+    );
 
-  console.log("Contraseña actualziada con exito")
-
-}
+  console.log("Contraseña actualziada con exito");
+};
 
 const logout = () => {
-  console.log("Usted se ha deslogueado con exito.")
+  console.log("Usted se ha deslogueado con exito.");
   currentUser = ghestUser;
-}
+};
 
 const existElement = (name, type) => {
   let existFile;
@@ -263,7 +276,6 @@ const createFile = (argvs) => {
   if (nameUsed) {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
-
     const newFileCreated = new File(name, metadata, content);
     currentFolder.addToComposite(newFileCreated);
 
@@ -424,7 +436,7 @@ const listContent = () => {
 // COMMAND $show + name
 const showFile = (argvs) => {
   const [_, name] = argvs;
-  if(!name) return console.log("Ingrese el nombre del archivo que quiere ver")
+  if (!name) return console.log("Ingrese el nombre del archivo que quiere ver");
   const fileExist = existElement(name, "file");
 
   if (!fileExist) {
@@ -451,7 +463,7 @@ const showFile = (argvs) => {
 // COMMAND $metadata + name
 const showMetadata = (argvs) => {
   const [_, name] = argvs;
-  if(!name) return console.log("Ingrese el nombre del archivo que quiere ver")
+  if (!name) return console.log("Ingrese el nombre del archivo que quiere ver");
   const fileExist = existElement(name, "file");
 
   if (!fileExist) {
@@ -475,6 +487,27 @@ const showMetadata = (argvs) => {
   }
 };
 
+const persistData = (argv) => {
+  const content = mainFolder.showComposite();
+
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+
+  // JSON.stringify(circularReference, );
+  const stringy = JSON.stringify(content, getCircularReplacer());
+  console.log(JSON.parse(stringy));
+};
+
 module.exports = {
   createFile,
   createFolder,
@@ -488,6 +521,7 @@ module.exports = {
   showMetadata,
   finder,
   deleteElement,
+  persistData,
   ////////////////////////
   //////// USERS /////////
   ////////////////////////
@@ -498,5 +532,5 @@ module.exports = {
   login,
   deleteUser,
   updatePassword,
-  logout
+  logout,
 };

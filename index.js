@@ -96,6 +96,9 @@ rl.on("line", function (line) {
     case "logout": //
       controller.logout();
       break;
+    case "persist": //
+    controller.persistData(argvs);
+    break;
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
       break;
