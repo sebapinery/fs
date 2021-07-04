@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 // CONTROLLER
 const controller = require("./controllers");
 

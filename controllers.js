@@ -1,26 +1,15 @@
-var Folder = require("./models/folder");
-var File = require("./models/file");
-var { User, user_roles } = require("./models/user");
-var Group = require("./models/userGroup");
-// var { encode } = require("./security");
+const Folder = require("./models/folder");
+const File = require("./models/file");
+const { User, user_roles } = require("./models/user");
+const Group = require("./models/userGroup");
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
+const superAdmin = new User("admin", "admin", { roleId: 3 });
+const ghestUser = new User("ghest", "1234", { roleId: 1 });
+const normalUser = new User("normal", "1234", { roleId: 2 });
 
-var superAdmin = new User("admin", "admin", { roleId: 3 });
-var ghestUser = new User("ghest", "1234", { roleId: 1 });
-var normalUser = new User("normal", "1234", { roleId: 2 });
-
-var allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
-
+const allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
 var currentUser = ghestUser;
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
 
 const initialPath = "~/";
 const initialMetaData = {

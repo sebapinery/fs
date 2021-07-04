@@ -3,8 +3,8 @@ const { encode } = require("../security");
 
 const user_roles = {
   read_only: 1,
-  normal: 2,
-  admin: 3,
+  regular: 2,
+  super: 3,
 };
 
 class User {
@@ -13,12 +13,12 @@ class User {
     this.name = name;
     this.password = encode(password);
     this.metadata = {
-      type: "user",
+      // type: "user",
       roleId: metadata.roleId,
       createdAt: `${date.toLocaleDateString(
         "es-AR"
       )} - ${date.toLocaleTimeString("es-AR")}`,
-      numDate: date.getTime(),
+      // numDate: date.getTime(),
     };
   }
 
