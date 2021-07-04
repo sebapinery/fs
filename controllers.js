@@ -27,8 +27,6 @@ var currentPath = currentFolder.showPath();
 
 const getAllUsers = () => {
   const usersFound = allUsers.showComposite();
-  const shipnow = hash("35583551", 35583551);
-  const encrypted = hash("Me gustaria que mi primer trabajo IT sea en Shipnow", shipnow);
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
   usersFound.forEach(u => console.log(u.print()))
@@ -488,7 +486,7 @@ const showMetadata = (argvs) => {
 };
 
 const persistData = (argv) => {
-  const content = mainFolder.showComposite();
+  const content = allUsers.showComposite();
 
   const getCircularReplacer = () => {
     const seen = new WeakSet();
@@ -502,11 +500,24 @@ const persistData = (argv) => {
       return value;
     };
   };
-
-  // JSON.stringify(circularReference, );
   const stringy = JSON.stringify(content, getCircularReplacer());
+
+  fs.writeFile('data.json', stringy, (e) => {
+    if(e){
+      return console.log(`Error: ${e}`)
+    }
+  })
+
   console.log(JSON.parse(stringy));
 };
+
+const load = () => {
+  fs.readFile('data.json', 'utf-8', (error, data) => {
+    if(!error){
+      console.log(JSON.parse(data))
+    }
+  })
+}
 
 module.exports = {
   createFile,
@@ -521,7 +532,6 @@ module.exports = {
   showMetadata,
   finder,
   deleteElement,
-  persistData,
   ////////////////////////
   //////// USERS /////////
   ////////////////////////
@@ -533,4 +543,9 @@ module.exports = {
   deleteUser,
   updatePassword,
   logout,
+  ////////////////////////
+  //////// DATA /////////
+  ////////////////////////
+  persistData,
+  load
 };
