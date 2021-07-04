@@ -1,14 +1,11 @@
 #!/usr/bin/env node
-
-// var File = require("./models/file");
-// var Folder = require("./models/folder");
-
 // CONTROLLER
 const controller = require("./controllers");
 
-var readline = require("readline");
-rl = readline.createInterface(process.stdin, process.stdout);
-prefix = `FileSystem> `;
+const readline = require("readline");
+const rl = readline.createInterface(process.stdin, process.stdout);
+const prefix = `FileSystem> `;
+// prefix = `${controller.showCurrentPath()}`
 
 rl.on("line", function (line) {
   const argvs = line.split(" ");
@@ -71,10 +68,13 @@ rl.on("line", function (line) {
     case "cu": // TIENE QUE SER $whoami
       controller.getCurrentUser();
       break;
+    case "create": //
+      controller.createUser(argvs);
+      break;
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    case "role": //     
+    case "role": //
       controller.checkMyRole();
       break;
     //////////////////////////////////////////////

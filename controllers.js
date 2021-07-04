@@ -13,6 +13,12 @@ var Group = require("./models/userGroup");
 // NORMAL = 2
 // ADMIN = 3
 
+const user_roles = {
+  read_only: 1,
+  normal: 2,
+  admin: 3,
+};
+
 var superAdmin = new User("admin", "admin", { roleId: 3 });
 var ghestUser = new User("ghest", "1234", { roleId: 1 });
 var normalUser = new User("normal", "1234", { roleId: 2 });
@@ -49,6 +55,53 @@ const checkMyRole = () => {
   const roleId = currentUser.showRoleId();
   // console.log(roleId);
   return roleId;
+};
+
+const userExists = (userName) => {
+  const userFound = allUsers
+    .showComposite()
+    .filter((user) => user.showName() === userName)[0];
+  if (!userFound) {
+    return false;
+  } else {
+    return userFound;
+  }
+};
+
+const createUser = (argvs) => {
+  const [_, username, password, roleFlag] = argvs;
+
+  const flag = roleFlag.slice(0, 5).trim();
+  const roleSelected = roleFlag.slice(6).trim();
+  const metadata = {
+    roleId: user_roles[roleSelected],
+  };
+
+  if (metadata.roleId === undefined) {
+    console.log(`El rol seleccionado no es existe.`);
+    console.log("");
+    console.log(`Roles validos son: 'admin', 'normal' y 'read_only'`);
+    console.log("");
+
+    return;
+  }
+
+  // console.log("Userename: ",username)
+  // console.log("Password: ",password)
+  // console.log("flag: ",roleSelected)
+
+  const userFound = userExists(username);
+
+  if (userFound) {
+    return console.log(
+      `El nombre ${username} ya esta en uso. Por favor utilice otro nombre de usuario.`
+    );
+  } else {
+    const newUser = new User(username, password, metadata);
+    allUsers.addToComposite(newUser);
+    console.log(`Se ha creado un nuevo usuaario`);
+    console.log(newUser);
+  }
 };
 
 /////////////////////////////////////////////////////////////////
@@ -149,13 +202,13 @@ const deleteElement = (argvs) => {
     return console.log(
       `Esta intentando borrar un elemento con el nombre "${name} que pertenece a un archivo y a una carpeta. Indique como tercer paramentro el tipo de elemento que quiere eliminar."`
     );
-
   if (!type) {
     let indexOfElement = indexFinder(elementFound);
     console.log(
       `Eliminado el elemento: "${elementFound.showName()}" de tipo "${elementFound.showType()}"`
     );
     currentFolder.removeInComposite(indexOfElement);
+    return true;
   } else {
     elementFound = finder(argvs);
     indexOfElement = indexFinder(elementFound);
@@ -163,6 +216,7 @@ const deleteElement = (argvs) => {
       `Eliminado el elemento: "${elementFound.showName()}" de tipo "${elementFound.showType()}"`
     );
     currentFolder.removeInComposite(indexOfElement);
+    return true;
   }
 };
 
@@ -190,12 +244,13 @@ const createFile = (argvs) => {
     console.log("------------ Archivo creado ---------------");
     console.log("-------------------------------------------");
     console.log("                                           ");
-    console.log("                                           ");
     console.log(`Nombre del nuevo archivo: "${newFileCreated.showName()}"`);
     console.log(`Crado en la ruta: ${currentPath}`);
     console.log(`El contenido del nuevo archivo es:`);
+    console.log("");
     console.log(newFileCreated.showContent());
-    console.log("                                           ");
+    console.log("");
+    console.log("-------------------------------------------");
     return true;
   }
 };
@@ -241,7 +296,7 @@ const selectFolder = (argvs) => {
     console.log("-------------------------------------------");
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
-    return
+    return;
   } else {
     const folderDestination = name;
     const listOfcomposite = currentFolder.showComposite();
@@ -252,9 +307,12 @@ const selectFolder = (argvs) => {
 
     if (folderFound.length === 0) {
       console.log(`La carpeta con nombre "${name}" no existe`);
+      return;
     } else {
-      if (folderFound[0].showType() !== "folder")
-        return console.log(`La carpeta con nombre "${name}" no existe`);
+      if (folderFound[0].showType() !== "folder") {
+        console.log(`La carpeta con nombre "${name}" no existe`);
+        return;
+      }
 
       parentFolder = currentFolder;
       currentFolder = folderFound[0];
@@ -298,42 +356,26 @@ const moveToParentFolder = () => {
 const showCurrentFolder = () => {
   console.log(">>>>> MOSTRANDO EL CURRENT FOLDER");
   console.log("                                 ");
-  console.log("                                 ");
   console.log(currentFolder);
-  console.log("                                 ");
-  console.log("                                 ");
   console.log("                                 ");
 };
 
 // COMMAND $path
 const showCurrentPath = () => {
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log(">>>>> SHOWING CURRENT PATH");
-  console.log("                                 ");
-  console.log("                                 ");
+  // console.log("                                 ");
+  // console.log(">>>>> SHOWING CURRENT PATH");
   console.log("                                 ");
   console.log(currentPath);
   console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
+  // return currentPath;
 };
 
 // COMMAND $pf
 const showParentFolder = () => {
   console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log(">>>>> SHOWING PARENT FOLDER");
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
+  console.log(">>>>> PARENT FOLDER IS: ");
   console.log("                                 ");
   console.log(parentFolder);
-  console.log("                                 ");
-  console.log("                                 ");
-  console.log("                                 ");
   console.log("                                 ");
 };
 
@@ -341,14 +383,17 @@ const showParentFolder = () => {
 const listContent = () => {
   const content = currentFolder.showComposite();
   if (content.length === 0) return console.log("El directorio esta vacio");
+  console.log(
+    `Mostrando el contenido de la carpeta "${currentFolder.showName()}"`
+  );
   content.forEach((element) => {
-    console.log("");
+    console.log("----------------------------------------");
     console.log(`Nombre: ${element.showName()}`);
     console.log(`Ruta: ${element.showPath()}`);
     console.log(`Tipo: ${element.showType()}`);
     console.log(`Fecha de creacion: ${element.showDataCreated()}`);
-    console.log("");
     console.log("----------------------------------------");
+    return;
   });
 };
 
@@ -364,8 +409,16 @@ const showFile = (argvs) => {
     if (!fileFound) {
       console.log(`El archivo con nombre "${name}" no existe`);
     } else {
+      console.log("----------------------------------------");
+      console.log(`Usted esta viendo el contenido de: `);
+      console.log(`Nombre del archivo: "${fileFound.showName()}"`);
+      console.log(`En la ruta: "${fileFound.showPath()}"`);
+      console.log("----------------------------------------");
       console.log("");
-      return console.log(fileFound.showContent());
+      console.log(fileFound.showContent());
+      console.log("");
+      console.log("----------------------------------------");
+      return;
     }
   }
 };
@@ -382,8 +435,16 @@ const showMetadata = (argvs) => {
     if (!fileFound) {
       console.log(`El archivo con nombre "${name}" no existe`);
     } else {
+      console.log("----------------------------------------");
+      console.log(`Usted esta viendo la metadata de: `);
+      console.log(`Nombre del archivo: "${fileFound.showName()}"`);
+      console.log(`En la ruta: "${fileFound.showPath()}"`);
+      console.log("----------------------------------------");
       console.log("");
-      return console.log(fileFound.showMetadata());
+      console.log(fileFound.showMetadata());
+      console.log("");
+      console.log("----------------------------------------");
+      return;
     }
   }
 };
@@ -411,4 +472,5 @@ module.exports = {
   getAllUsers,
   getCurrentUser,
   checkMyRole,
+  createUser,
 };
