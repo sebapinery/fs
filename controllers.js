@@ -8,11 +8,11 @@ const { hash, comparePassword } = require("./security");
 const fs = require("fs");
 
 const superAdmin = new User("admin", "admin", { roleId: 3 });
-const ghestUser = new User("ghest", "1234", { roleId: 1 });
+const guestUser = new User("guest", "1234", { roleId: 1 });
 const normalUser = new User("normal", "1234", { roleId: 2 });
 
-const allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
-var currentUser = ghestUser;
+const allUsers = new Group("allUsers", [superAdmin, guestUser, normalUser]);
+var currentUser = guestUser;
 
 const initialPath = "~/";
 const initialMetaData = {
