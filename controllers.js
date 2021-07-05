@@ -156,7 +156,7 @@ const updatePassword = (argvs) => {
 };
 
 const logout = () => {
-  currentUser = ghestUser;
+  currentUser = guestUser;
   console.log("-------------------------------------------");
   console.log("Usted se ha deslogueado con exito.");
   console.log("-------------------------------------------");
