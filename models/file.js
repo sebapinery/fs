@@ -11,31 +11,31 @@ class File {
     };
   }
 
-  showDataCreated(){
-    return this.metadata.createdAt;
-  }
+  // showDataCreated(){
+  //   return this.metadata.createdAt;
+  // }
 
-  showContent(){
-    return this.content;
-  }
+  // showContent(){
+  //   return this.content;
+  // }
 
-  showType() {
-    return this.metadata.type;
-  }
+  // showType() {
+  //   return this.metadata.type;
+  // }
 
-  showName() {
-    return this.name;
-  }
-  showMetadata() {
-    return this.metadata;
-  }
-  showPath() {
-    return this.metadata.path;
-  }
+  // showName() {
+  //   return this.name;
+  // }
+  // showMetadata() {
+  //   return this.metadata;
+  // }
+  // showPath() {
+  //   return this.metadata.path;
+  // }
 
-  print() {
-    console.log(this);
-  }
+  // print() {
+  //   console.log(this);
+  // }
 }
 
 module.exports = File;

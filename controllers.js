@@ -3,7 +3,7 @@ const File = require("./models/file");
 const { User, user_roles } = require("./models/user");
 const Group = require("./models/userGroup");
 
-const { hash } = require("./security");
+const { hash, comparePassword } = require("./security");
 
 const fs = require("fs");
 const path = require("path");
@@ -13,7 +13,7 @@ const ghestUser = new User("ghest", "1234", { roleId: 1 });
 const normalUser = new User("normal", "1234", { roleId: 2 });
 
 const allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
-var currentUser = ghestUser;
+var currentUser = superAdmin;
 
 const initialPath = "~/";
 const initialMetaData = {
@@ -23,37 +23,30 @@ const initialMetaData = {
 var mainFolder = new Folder("root", [], initialMetaData);
 var currentFolder = mainFolder;
 var parentFolder;
-var currentPath = currentFolder.showPath();
+var currentPath = currentFolder.metadata.path;
 
 const getAllUsers = () => {
-  const usersFound = allUsers.showComposite();
+  const usersFound = allUsers.composite;
   // /////////////////////////////////////////////////////
   // /////////////////////////////////////////////////////
-  usersFound.forEach(u => console.log(u))
+  usersFound.forEach(u => console.log("hola",u))
   // console.log(usersFound);
-  
-
-
-
-
-  
-
 
 };
 
 const getCurrentUser = () => {
-  return console.log(currentUser.print());
+  return console.log(currentUser);
 };
 
 const checkMyRole = () => {
-  const roleId = currentUser.showRoleId();
+  const roleId = currentUser.metadata.roleId;
   return roleId;
 };
 
 const userExists = (userName) => {
   const userFound = allUsers
-    .showComposite()
-    .filter((user) => user.showName() === userName)[0];
+    .composite
+    .filter((user) => user.name === userName)[0];
   if (!userFound) {
     return false;
   } else {
@@ -96,7 +89,7 @@ const createUser = (argvs) => {
     const newUser = new User(username, password, metadata);
     allUsers.addToComposite(newUser);
     console.log(`Se ha creado un nuevo usuaario`);
-    console.log(newUser.print());
+    console.log(newUser);
   }
 };
 
@@ -106,7 +99,8 @@ const login = (argvs) => {
   const userFound = userExists(username);
   if (!userFound) return console.log(`El nombre ${username} no existe`);
 
-  const validPassword = userFound.comparePassword(password);
+  // const validPassword = userFound.comparePassword(password);
+  const validPassword = comparePassword(userFound.password, password)
   if (!validPassword) {
     return console.log(`La contraseña ingresada no es valida`);
   } else {
@@ -137,11 +131,14 @@ const updatePassword = (argvs) => {
   if (checkMyRole() < 2)
     return console.log(`No tiene permisos para realizar esta accion`);
 
-  const updateSuccess = currentUser.editPassword(newPassword);
-  if (!updateSuccess)
-    return console.log(
-      `Ocurrio un error actualizando la contraseña, por favor intente nuevamente`
-    );
+  // const updateSuccess = currentUser.editPassword(newPassword);
+  const encryptedNewPassword = hash(newPassword);
+  currentUser.password = encryptedNewPassword;
+  // if (!updateSuccess)
+  //   return console.log(
+  //     `Ocurrio un error actualizando la contraseña, por favor intente nuevamente`
+  //   );
+
 
   console.log("Contraseña actualziada con exito");
 };
@@ -155,14 +152,13 @@ const existElement = (name, type) => {
   let existFile;
   if (!type) {
     existFile = currentFolder
-      .showComposite()
-      // .filter((content) => content.showType() === type)
-      .filter((content) => content.showName() === name)[0];
+      .composite
+      .filter((content) => content.name === name)[0];
   } else {
     existFile = currentFolder
-      .showComposite()
-      .filter((content) => content.showType() === type)
-      .filter((content) => content.showName() === name)[0];
+      .composite
+      .filter((content) => content.metadata.type === type)
+      .filter((content) => content.name === name)[0];
   }
   if (!existFile) {
     return false;
@@ -173,12 +169,10 @@ const existElement = (name, type) => {
 
 const isUnique = (name) => {
   const qtyOfFilesSameName = currentFolder
-    .showComposite()
-    .filter((content) => content.showName() === name);
+    .composite
+    .filter((content) => content.name === name);
 
-  if (qtyOfFilesSameName.length > 1) {
-    return false;
-  } else if (qtyOfFilesSameName.length === 0) {
+  if (qtyOfFilesSameName.length !== 1) {
     return false;
   } else {
     return true;
@@ -187,28 +181,25 @@ const isUnique = (name) => {
 
 const finder = (argvs) => {
   const [_, name, type] = argvs;
-
+  
   const exist = existElement(name, type);
   const unique = isUnique(name);
-  // console.log(unique)
   if (!exist) return false;
   if (!unique && !type)
-    return console.log(
-      `El nombre "${name}" pertenecea a un archivo y a una carpeta. Utilice como tercer argumento el tipo de archivo que quiere ver `
+  return console.log(
+    `El nombre "${name}" pertenecea a un archivo y a una carpeta. Utilice como tercer argumento el tipo de archivo que quiere ver `
     );
-
-  let elementFound;
-  if (!type) {
+    let elementFound;
+    if (!type) {
+      elementFound = currentFolder
+      .composite
+      .filter((content) => content.name === name)[0];
+    } else {
     elementFound = currentFolder
-      .showComposite()
-      // .filter((content) => content.showType() === type)
-      .filter((content) => content.showName() === name)[0];
-  } else {
-    elementFound = currentFolder
-      .showComposite()
-      .filter((content) => content.showType() === type)
-      .filter((content) => content.showName() === name)[0];
-  }
+      .composite
+      .filter((content) => content.metadata.type === type)
+      .filter((content) => content.name === name)[0];
+    }
   if (!elementFound) {
     return false;
   } else {
@@ -217,7 +208,7 @@ const finder = (argvs) => {
 };
 
 const indexFinder = (element, where) => {
-  const folderContent = currentFolder.showComposite();
+  const folderContent = currentFolder.composite;
 
   if (!where) {
     const index = folderContent.indexOf(element);
@@ -225,7 +216,7 @@ const indexFinder = (element, where) => {
     return index;
   }
   if (where === "users") {
-    const index = allUsers.showComposite().indexOf(element);
+    const index = allUsers.composite.indexOf(element);
     if (index === -1) return false;
     return index;
   }
@@ -252,7 +243,7 @@ const deleteElement = (argvs) => {
   if (!type) {
     let indexOfElement = indexFinder(elementFound);
     console.log(
-      `Eliminado el elemento: "${elementFound.showName()}" de tipo "${elementFound.showType()}"`
+      `Eliminado el elemento: "${elementFound.name}" de tipo "${elementFound.metadata.type}"`
     );
     currentFolder.removeInComposite(indexOfElement);
     return true;
@@ -260,7 +251,7 @@ const deleteElement = (argvs) => {
     elementFound = finder(argvs);
     indexOfElement = indexFinder(elementFound);
     console.log(
-      `Eliminado el elemento: "${elementFound.showName()}" de tipo "${elementFound.showType()}"`
+      `Eliminado el elemento: "${elementFound.name}" de tipo "${elementFound.metadata.type}"`
     );
     currentFolder.removeInComposite(indexOfElement);
     return true;
@@ -283,18 +274,18 @@ const createFile = (argvs) => {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
     const newFileCreated = new File(name, metadata, content);
-    currentFolder.addToComposite(newFileCreated);
+    addToComposite(newFileCreated);
 
     console.log("                                           ");
     console.log("-------------------------------------------");
     console.log("------------ Archivo creado ---------------");
     console.log("-------------------------------------------");
     console.log("                                           ");
-    console.log(`Nombre del nuevo archivo: "${newFileCreated.showName()}"`);
+    console.log(`Nombre del nuevo archivo: "${newFileCreated.name}"`);
     console.log(`Crado en la ruta: ${currentPath}`);
     console.log(`El contenido del nuevo archivo es:`);
     console.log("");
-    console.log(newFileCreated.showContent());
+    console.log(newFileCreated.content);
     console.log("");
     console.log("-------------------------------------------");
     return true;
@@ -319,13 +310,13 @@ const createFolder = (argvs) => {
       );
 
     const newFolder = new Folder(name, [], metadata);
-    currentFolder.addToComposite(newFolder);
+    addToComposite(newFolder);
     console.log("-------------------------------------------");
     console.log("------------ Carpeta creada ---------------");
     console.log("-------------------------------------------");
     console.log("                                           ");
     console.log("                                           ");
-    console.log(`Nombre de la nueva carpeta: "${newFolder.showName()}"`);
+    console.log(`Nombre de la nueva carpeta: "${newFolder.name}"`);
     console.log(`Creado en la ruta: ${currentPath}`);
     console.log("                                           ");
     console.log("                                           ");
@@ -334,12 +325,16 @@ const createFolder = (argvs) => {
   }
 };
 
+const addToComposite = (element) => {
+  currentFolder.composite.push(element);
+}
+
 // COMMAND $cd + nameFolderDestination
 const selectFolder = (argvs) => {
   const [_, name] = argvs;
   if (argvs.length === 1) {
     currentFolder = mainFolder;
-    currentPath = currentFolder.showPath();
+    currentPath = currentFolder.metadata.path;
     console.log("-------------------------------------------");
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
@@ -347,11 +342,11 @@ const selectFolder = (argvs) => {
   } else {
     const folderFound = finder([_, name, "folder"]);
 
-    if (folderFound.length === 0) {
+    if (!folderFound) {
       console.log(`La carpeta con nombre "${name}" no existe`);
       return;
     } else {
-      if (folderFound.showType() !== "folder") {
+      if (folderFound.metadata.type !== "folder") {
         console.log(`La carpeta con nombre "${name}" no existe`);
         return;
       }
@@ -360,9 +355,9 @@ const selectFolder = (argvs) => {
       currentFolder = folderFound;
 
       if (currentPath === "~/") {
-        currentPath = `${currentPath + currentFolder.showName()}`;
+        currentPath = `${currentPath + currentFolder.name}`;
       } else {
-        currentPath = `${currentPath + "/" + currentFolder.showName()}`;
+        currentPath = `${currentPath + "/" + currentFolder.name}`;
       }
       console.log("-------------------------------------------");
       console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
@@ -374,20 +369,20 @@ const selectFolder = (argvs) => {
 // COMMAND $cd..
 const moveToParentFolder = () => {
   if (currentFolder === mainFolder) {
-    currentPath = currentFolder.showPath();
+    currentPath = currentFolder.metadata.path;
     console.log("-------------------------------------------");
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
   } else if (parentFolder === undefined) {
     currentFolder = mainFolder;
-    currentPath = currentFolder.showPath();
+    currentPath = currentFolder.metadata.path;
     console.log("-------------------------------------------");
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
   } else {
-    currentPath = currentFolder.showPath();
+    currentPath = currentFolder.metadata.path;
     currentFolder = parentFolder;
-    parentFolder = currentFolder.showParentFolder();
+    parentFolder = currentFolder.metadata.parentFolder;
     console.log("-------------------------------------------");
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
@@ -423,17 +418,17 @@ const showParentFolder = () => {
 
 // COMMAND $ls
 const listContent = () => {
-  const content = currentFolder.showComposite();
+  const content = currentFolder.composite;
   if (content.length === 0) return console.log("El directorio esta vacio");
   console.log(
-    `Mostrando el contenido de la carpeta "${currentFolder.showName()}"`
+    `Mostrando el contenido de la carpeta "${currentFolder.name}"`
   );
   content.forEach((element) => {
     console.log("----------------------------------------");
-    console.log(`Nombre: ${element.showName()}`);
-    console.log(`Ruta: ${element.showPath()}`);
-    console.log(`Tipo: ${element.showType()}`);
-    console.log(`Fecha de creacion: ${element.showDataCreated()}`);
+    console.log(`Nombre: ${element.name}`);
+    console.log(`Ruta: ${element.metadata.path}`);
+    console.log(`Tipo: ${element.metadata.type}`);
+    console.log(`Fecha de creacion: ${element.metadata.createdAt}`);
     console.log("----------------------------------------");
     return;
   });
@@ -454,11 +449,11 @@ const showFile = (argvs) => {
     } else {
       console.log("----------------------------------------");
       console.log(`Usted esta viendo el contenido de: `);
-      console.log(`Nombre del archivo: "${fileFound.showName()}"`);
-      console.log(`En la ruta: "${fileFound.showPath()}"`);
+      console.log(`Nombre del archivo: "${fileFound.name}"`);
+      console.log(`En la ruta: "${fileFound.metadata.path}"`);
       console.log("----------------------------------------");
       console.log("");
-      console.log(fileFound.showContent());
+      console.log(fileFound.content);
       console.log("");
       console.log("----------------------------------------");
       return;
@@ -481,11 +476,11 @@ const showMetadata = (argvs) => {
     } else {
       console.log("----------------------------------------");
       console.log(`Usted esta viendo la metadata de: `);
-      console.log(`Nombre del archivo: "${fileFound.showName()}"`);
-      console.log(`En la ruta: "${fileFound.showPath()}"`);
+      console.log(`Nombre del archivo: "${fileFound.name}"`);
+      console.log(`En la ruta: "${fileFound.metadata.path}"`);
       console.log("----------------------------------------");
       console.log("");
-      console.log(fileFound.showMetadata());
+      console.log(fileFound.metadata);
       console.log("");
       console.log("----------------------------------------");
       return;
@@ -494,7 +489,7 @@ const showMetadata = (argvs) => {
 };
 
 const persistData = (argv) => {
-  const content = allUsers.showComposite();
+  const content = mainFolder.composite;
 
   const getCircularReplacer = () => {
     const seen = new WeakSet();
@@ -522,9 +517,12 @@ const persistData = (argv) => {
 const load = () => {
   fs.readFile("data.json", "utf-8", (error, data) => {
     if (!error) {
+      mainFolder.setData(JSON.parse(data))
       console.log(JSON.parse(data));
+      return;
     }
   });
+  return;
 };
 
 module.exports = {

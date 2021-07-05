@@ -15,6 +15,11 @@ class Group {
     return this.composite.splice(index, 1);
   }
 
+  setData(data){
+    this.composite = data;
+    return this.composite;
+  }
+
   print() {
     return this;
   }

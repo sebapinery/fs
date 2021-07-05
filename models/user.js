@@ -8,7 +8,7 @@ const user_roles = {
 
 class User {
 
-  #password;
+  password;
   constructor(name, password, metadata) {
     const date = new Date();
     this.name = name;
@@ -18,25 +18,16 @@ class User {
         "es-AR"
         )} - ${date.toLocaleTimeString("es-AR")}`,
       };
-      this.#password = hash(password);
+      this.password = hash(password);
   }
 
   showName() {
     return this.name;
   }
 
-  comparePassword(passwordEntered) {
-    const encodedPassword =
-      hash(passwordEntered);
-    if (this.#password === encodedPassword) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   editPassword(newPassword) {
-    this.#password = hash(newPassword);
+    this.password = hash(newPassword);
+    console.log("UPDATED PASS:", this.password)
     return true;
   }
 

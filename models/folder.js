@@ -4,7 +4,7 @@ class Folder {
     this.metadata = {
       type: "folder",
       path: metadata.path,
-      parentFoler: metadata.parentFolder,
+      parentFolder: metadata.parentFolder,
       createdAt: `${new Date().toLocaleDateString(
         "es-AR"
       )} - ${new Date().toLocaleTimeString("es-AR")}`,
@@ -12,45 +12,50 @@ class Folder {
     this.composite = composite;
   }
 
-  showParentFolder(){
-    return this.metadata.parentFoler;
-  }
+  // showParentFolder(){
+  //   return this.metadata.parentFolder;
+  // }
 
-  showDataCreated() {
-    return this.metadata.createdAt;
-  }
+  // showDataCreated() {
+  //   return this.metadata.createdAt;
+  // }
 
-  showType() {
-    return this.metadata.type;
-  }
+  // showType() {
+  //   return this.metadata.type;
+  // }
 
-  showName() {
-    return this.name;
-  }
+  // showName() {
+  //   return this.name;
+  // }
 
-  showMetadata() {
-    return this.metadata;
-  }
+  // showMetadata() {
+  //   return this.metadata;
+  // }
 
-  showPath() {
-    return this.metadata.path;
-  }
+  // showPath() {
+  //   return this.metadata.path;
+  // }
 
   showComposite() {
     return this.composite;
   }
 
-  addToComposite(element) {
-    this.composite.push(element);
-  }
+  // addToComposite(element) {
+  //   this.composite.push(element);
+  // }
 
   removeInComposite(index) {
     return this.composite.splice(index, 1);
   }
 
-  print() {
-    return this;
+  setData(data){
+    this.composite = data;
+    return this.composite;
   }
+
+  // print() {
+  //   return this;
+  // }
 }
 
 module.exports = Folder;
