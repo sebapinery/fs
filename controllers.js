@@ -486,8 +486,7 @@ const backUpData = () => {
     }
   });
 
-  console.log(JSON.parse(filesStringified));
-  console.log(JSON.parse(usersStringified));
+  console.log("Datos guardados en data.json y users.json");
 };
 
 const persistData = (argvs) => {
