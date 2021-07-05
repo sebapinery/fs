@@ -14,31 +14,31 @@ rl.on("line", function (line) {
     case "cd": //
       controller.selectFolder(argvs);
       break;
-    case "create_file": // create_file
+    case "create_file": // 
       controller.createFile(argvs);
       break;
-    case "create_folder": // create_folder
+    case "create_folder": //
       controller.createFolder(argvs);
       break;
     case "ls":
       controller.listContent();
       break;
-    case "whereami": // whereami
+    case "whereami": //
       controller.showCurrentPath();
       break;
-    case "show": // show + name
+    case "show": //
       controller.showFile(argvs);
       break;
-    case "metadata": // metadata + name
+    case "metadata": // 
       controller.showMetadata(argvs);
       break;
-    case "destroy": // destroy name -type?
+    case "destroy": //
       controller.deleteElement(argvs);
       break;
-    case "whoami": // TIENE QUE SER $whoami
+    case "whoami": // 
       controller.getCurrentUser();
       break;
-    case "create_user": // $create_user
+    case "create_user": // 
       controller.createUser(argvs);
       break;
     case "destroy_user":
