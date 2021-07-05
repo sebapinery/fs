@@ -30,7 +30,7 @@ username: normal
 password: 1234
 
 read_only: (Usuario actual al iniciar la terminal o hacer logout de cualquier usuario)
-username: ghest
+username: guest
 password: 1234
 ```
 ## Comandos de manejo de archivos
