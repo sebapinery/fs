@@ -4,9 +4,9 @@ class Group {
     this.composite = composite;
   }
 
-  showComposite() {
-    return this.composite;
-  }
+  // showComposite() {
+  //   return this.composite;
+  // }
   addToComposite(User) {
     return this.composite.push(User);
   }
@@ -20,9 +20,9 @@ class Group {
     return this.composite;
   }
 
-  print() {
-    return this;
-  }
+  // print() {
+  //   return this;
+  // }
 }
 
 module.exports = Group;

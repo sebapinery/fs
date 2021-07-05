@@ -11,38 +11,9 @@ class Folder {
     };
     this.composite = composite;
   }
-
-  // showParentFolder(){
-  //   return this.metadata.parentFolder;
-  // }
-
-  // showDataCreated() {
-  //   return this.metadata.createdAt;
-  // }
-
-  // showType() {
-  //   return this.metadata.type;
-  // }
-
-  // showName() {
-  //   return this.name;
-  // }
-
-  // showMetadata() {
-  //   return this.metadata;
-  // }
-
-  // showPath() {
-  //   return this.metadata.path;
-  // }
-
   showComposite() {
     return this.composite;
   }
-
-  // addToComposite(element) {
-  //   this.composite.push(element);
-  // }
 
   removeInComposite(index) {
     return this.composite.splice(index, 1);
@@ -53,9 +24,6 @@ class Folder {
     return this.composite;
   }
 
-  // print() {
-  //   return this;
-  // }
 }
 
 module.exports = Folder;

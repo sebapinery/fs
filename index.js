@@ -100,7 +100,7 @@ rl.on("line", function (line) {
       controller.persistData(argvs);
       break;
     case "load": //
-      controller.load();
+      return controller.load();
       break;
     default:
       console.log("COMANDO NO VALIDO: ", argvs);

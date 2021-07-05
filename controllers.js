@@ -27,11 +27,7 @@ var currentPath = currentFolder.metadata.path;
 
 const getAllUsers = () => {
   const usersFound = allUsers.composite;
-  // /////////////////////////////////////////////////////
-  // /////////////////////////////////////////////////////
-  usersFound.forEach(u => console.log("hola",u))
-  // console.log(usersFound);
-
+  usersFound.forEach(u => console.log(u))
 };
 
 const getCurrentUser = () => {
@@ -489,7 +485,8 @@ const showMetadata = (argvs) => {
 };
 
 const persistData = (argv) => {
-  const content = mainFolder.composite;
+  const contentFilesAndFolders = mainFolder.composite;
+  const contentUsers = allUsers.composite;
 
   const getCircularReplacer = () => {
     const seen = new WeakSet();
@@ -503,26 +500,42 @@ const persistData = (argv) => {
       return value;
     };
   };
-  const stringy = JSON.stringify(content, getCircularReplacer());
+  const filesStringified = JSON.stringify(contentFilesAndFolders, getCircularReplacer());
+  const usersStringified = JSON.stringify(contentUsers, getCircularReplacer());
 
-  fs.writeFile("data.json", stringy, (e) => {
+  fs.writeFile("data.json", filesStringified, (e) => {
     if (e) {
       return console.log(`Error: ${e}`);
     }
   });
 
-  console.log(JSON.parse(stringy));
+  fs.writeFile("users.json", usersStringified, (e) => {
+    if (e) {
+      return console.log(`Error: ${e}`);
+    }
+  });
+
+  console.log(JSON.parse(filesStringified));
+  console.log(JSON.parse(usersStringified));
+
 };
 
 const load = () => {
   fs.readFile("data.json", "utf-8", (error, data) => {
     if (!error) {
-      mainFolder.setData(JSON.parse(data))
+      mainFolder.setData(JSON.parse(data));
       console.log(JSON.parse(data));
       return;
     }
   });
-  return;
+  fs.readFile("users.json", "utf-8", (error, data) => {
+    if (!error) {
+      allUsers.setData(JSON.parse(data));
+      console.log(JSON.parse(data));
+      return;
+    }
+  });
+  return true;
 };
 
 module.exports = {
