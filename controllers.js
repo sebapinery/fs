@@ -69,9 +69,7 @@ const createUser = (argvs) => {
     return;
   }
   if (metadata.roleId === undefined) {
-    console.log(
-      `El rol seleccionado no existe. Debe ingresarlo como '-role='`
-    );
+    console.log(`El rol seleccionado no existe. Debe ingresarlo como '-role='`);
     console.log("");
     console.log(`Roles validos son: 'super', 'regular' y 'read_only'`);
     console.log("");
@@ -106,6 +104,23 @@ const login = (argvs) => {
     console.log("-------------------------------------------");
   }
 };
+const addToComposite = (element, type) => {
+  if (type === "file" || type === "folder")
+    return currentFolder.composite.push(element);
+  if (type === "user") return allUsers.composite.push(element);
+  return console.log(`Ocurrio un error!`);
+};
+
+const removeFromComposite = (element, type) => {
+  if (!type) {
+    return currentFolder.composite.filter(e  => e !== element);
+  }
+  if (type === "user") {
+    return allUsers.composite.filter(e  => e !== element);
+  }
+
+  return console.log(`Ocurrio un error!`);
+};
 
 const deleteUser = (argvs) => {
   const [_, username] = argvs;
@@ -116,11 +131,10 @@ const deleteUser = (argvs) => {
   const existUser = userExists(username);
   if (!existUser) return console.log(`El nombre ${username} no existe`);
 
-  const userIndex = indexFinder(existUser, "users");
   console.log("-------------------------------------------");
   console.log(`Eliminado el usuario: "${username}"`);
   console.log("-------------------------------------------");
-  allUsers.removeInComposite(userIndex);
+  allUsers.composite = removeFromComposite(existUser, "user");
   return true;
 };
 
@@ -205,22 +219,6 @@ const finder = (argvs) => {
   }
 };
 
-const indexFinder = (element, where) => {
-  const folderContent = currentFolder.composite;
-
-  if (!where) {
-    const index = folderContent.indexOf(element);
-    if (index === -1) return false;
-    return index;
-  }
-  if (where === "users") {
-    const index = allUsers.composite.indexOf(element);
-    if (index === -1) return false;
-    return index;
-  }
-  return false;
-};
-
 const deleteElement = (argvs) => {
   const [_, name, type] = argvs;
 
@@ -234,25 +232,21 @@ const deleteElement = (argvs) => {
   if (argvs.length === 1)
     return console.log("Ingrese un nombre luego de destroy");
   let elementFound = finder(argvs);
-  if (!elementFound)
-    return;
+  if (!elementFound) return console.log(`Intente nuevamente`) ;
   if (!type) {
-    let indexOfElement = indexFinder(elementFound);
     console.log(
       `Eliminado el elemento: "${elementFound.name}" de tipo "${elementFound.metadata.type}"`
     );
-    currentFolder.removeInComposite(indexOfElement);
-    return true;
+    currentFolder.composite = removeFromComposite(elementFound);
   } else {
     elementFound = finder(argvs);
-    indexOfElement = indexFinder(elementFound);
+    currentFolder.composite = removeFromComposite(elementFound);
     console.log("-------------------------------------------");
     console.log(
       `Eliminado el elemento: "${elementFound.name}" de tipo "${elementFound.metadata.type}"`
     );
-    currentFolder.removeInComposite(indexOfElement);
     console.log("-------------------------------------------");
-    return true;
+    return;
   }
 };
 
@@ -319,12 +313,6 @@ const createFolder = (argvs) => {
   }
 };
 
-const addToComposite = (element, type) => {
-  if(type === "file" || type === "folder") return currentFolder.composite.push(element);
-  if(type === "user") return allUsers.composite.push(element)
-  return console.log(`Ocurrio un error!`)
-}
-
 // COMMAND $cd + nameFolderDestination
 const selectFolder = (argvs) => {
   const [_, name] = argvs;
@@ -335,7 +323,7 @@ const selectFolder = (argvs) => {
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
     return;
-  }else if(name === ".."){
+  } else if (name === "..") {
     return moveToParentFolder();
   } else {
     const folderFound = finder([_, name, "folder"]);
@@ -464,7 +452,7 @@ const showMetadata = (argvs) => {
   }
 };
 
-const persistData = (argv) => {
+const backUpData = () => {
   const contentFilesAndFolders = mainFolder.composite;
   const contentUsers = allUsers.composite;
 
@@ -502,22 +490,41 @@ const persistData = (argv) => {
   console.log(JSON.parse(usersStringified));
 };
 
-const load = () => {
-  fs.readFile("data.json", "utf-8", (error, data) => {
-    if (!error) {
-      mainFolder.setData(JSON.parse(data));
-      console.log(JSON.parse(data));
-      return;
-    }
-  });
-  fs.readFile("users.json", "utf-8", (error, data) => {
-    if (!error) {
-      allUsers.setData(JSON.parse(data));
-      console.log(JSON.parse(data));
-      return;
-    }
-  });
-  return true;
+const persistData = (argvs) => {
+  const [_, fileName, type] = argvs;
+
+  if (!fileName)
+    return console.log(
+      "Por favor ingrese el nombre del archivo de donde quiere tomar los datos perstidos. Por ejemplo 'data.json' seguido del tipo de dato. Puede cargar users y data."
+    );
+  if (!type)
+    return console.log(
+      "Por favor ingrese el tipo de dato que quiere cargar. Puede cargar users y data. Por ejemplo: '-persist data.json data' o '-persist users.json users' "
+    );
+
+  if (type == "data") {
+    fs.readFile(fileName, "utf-8", (error, data) => {
+      if (!error) {
+        console.log("Data cargada con exito!");
+        return currentFolder.setData(JSON.parse(data))
+      }else{
+        return console.log(`Error: ${error}`);
+      }
+    });
+  }
+
+  if (type == "users") {
+    fs.readFile(fileName, "utf-8", (error, data) => {
+      if (!error) {
+        console.log("Usuarios cargados con exito!")
+        allUsers.composite = JSON.parse(data)
+        return;
+      }else{
+        return console.log(`Error: ${error}`);
+      }
+    });
+  }
+
 };
 
 module.exports = {
@@ -536,5 +543,5 @@ module.exports = {
   updatePassword,
   logout,
   persistData,
-  load,
+  backUpData,
 };

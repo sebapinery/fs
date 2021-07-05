@@ -53,11 +53,11 @@ rl.on("line", function (line) {
     case "logout": //
       controller.logout();
       break;
-    case "persist": //
+    case "-persist": //
       controller.persistData(argvs);
       break;
-    case "load": //
-      controller.load(argvs);
+    case "backup": //
+      controller.backUpData();
       break;
     case "exit":
       console.clear();
