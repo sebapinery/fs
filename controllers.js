@@ -6,14 +6,13 @@ const Group = require("./models/userGroup");
 const { hash, comparePassword } = require("./security");
 
 const fs = require("fs");
-const path = require("path");
 
 const superAdmin = new User("admin", "admin", { roleId: 3 });
 const ghestUser = new User("ghest", "1234", { roleId: 1 });
 const normalUser = new User("normal", "1234", { roleId: 2 });
 
 const allUsers = new Group("allUsers", [superAdmin, ghestUser, normalUser]);
-var currentUser = superAdmin;
+var currentUser = ghestUser;
 
 const initialPath = "~/";
 const initialMetaData = {
@@ -25,17 +24,11 @@ var currentFolder = mainFolder;
 var parentFolder;
 var currentPath = currentFolder.metadata.path;
 
-const getAllUsers = () => {
-  const usersFound = allUsers.composite;
-  // /////////////////////////////////////////////////////
-  // /////////////////////////////////////////////////////
-  usersFound.forEach(u => console.log("hola",u))
-  // console.log(usersFound);
-
-};
-
 const getCurrentUser = () => {
-  return console.log(currentUser);
+  console.log("-------------------------------------------");
+  console.log(`Usted esta logeado con el usuario >>> ${currentUser.name}`);
+  console.log("-------------------------------------------");
+  return;
 };
 
 const checkMyRole = () => {
@@ -44,9 +37,9 @@ const checkMyRole = () => {
 };
 
 const userExists = (userName) => {
-  const userFound = allUsers
-    .composite
-    .filter((user) => user.name === userName)[0];
+  const userFound = allUsers.composite.filter(
+    (user) => user.name === userName
+  )[0];
   if (!userFound) {
     return false;
   } else {
@@ -56,6 +49,10 @@ const userExists = (userName) => {
 
 const createUser = (argvs) => {
   const [_, username, password, roleFlag] = argvs;
+  if (argvs.length < 4)
+    return console.log(
+      "Por favor ingrese un nombre de usuario, contrasña y rol de usuario. Por ejemplo: create_user newUserName password1234 -role=read_only"
+    );
   if (checkMyRole() < 2)
     return console.log(`No posee los permisos para realizar esta accion`);
 
@@ -72,24 +69,23 @@ const createUser = (argvs) => {
     return;
   }
   if (metadata.roleId === undefined) {
-    console.log(`El rol seleccionado no es existe.`);
+    console.log(
+      `El rol seleccionado no es existe. Debe ingresarlo como '-role='`
+    );
     console.log("");
     console.log(`Roles validos son: 'super', 'regular' y 'read_only'`);
     console.log("");
     return;
   }
-
   const userFound = userExists(username);
-
   if (userFound) {
     return console.log(
       `El nombre ${username} ya esta en uso. Por favor utilice otro nombre de usuario.`
     );
   } else {
     const newUser = new User(username, password, metadata);
-    allUsers.addToComposite(newUser);
-    console.log(`Se ha creado un nuevo usuaario`);
-    console.log(newUser);
+    addToComposite(newUser, "user");
+    console.log(`Se ha creado un nuevo usuario con el nombre ${newUser.name}`);
   }
 };
 
@@ -99,13 +95,15 @@ const login = (argvs) => {
   const userFound = userExists(username);
   if (!userFound) return console.log(`El nombre ${username} no existe`);
 
-  // const validPassword = userFound.comparePassword(password);
-  const validPassword = comparePassword(userFound.password, password)
+  const validPassword = comparePassword(userFound.password, password);
   if (!validPassword) {
     return console.log(`La contraseña ingresada no es valida`);
   } else {
-    console.log("Login correcto!");
     currentUser = userFound;
+    console.log("-------------------------------------------");
+    console.log("Login correcto!");
+    console.log(`Usted esta logeado con el usuario >>> ${currentUser.name}`);
+    console.log("-------------------------------------------");
   }
 };
 
@@ -119,8 +117,9 @@ const deleteUser = (argvs) => {
   if (!existUser) return console.log(`El nombre ${username} no existe`);
 
   const userIndex = indexFinder(existUser, "users");
-
+  console.log("-------------------------------------------");
   console.log(`Eliminado el usuario: "${username}"`);
+  console.log("-------------------------------------------");
   allUsers.removeInComposite(userIndex);
   return true;
 };
@@ -131,32 +130,32 @@ const updatePassword = (argvs) => {
   if (checkMyRole() < 2)
     return console.log(`No tiene permisos para realizar esta accion`);
 
-  // const updateSuccess = currentUser.editPassword(newPassword);
   const encryptedNewPassword = hash(newPassword);
+  if (!encryptedNewPassword)
+    return console.log(
+      `Hubo un error actualizando la contraseña. Intente nuevamente`
+    );
   currentUser.password = encryptedNewPassword;
-  // if (!updateSuccess)
-  //   return console.log(
-  //     `Ocurrio un error actualizando la contraseña, por favor intente nuevamente`
-  //   );
-
-
+  console.log("-------------------------------------------");
   console.log("Contraseña actualziada con exito");
+  console.log("-------------------------------------------");
 };
 
 const logout = () => {
+  console.log("-------------------------------------------");
   console.log("Usted se ha deslogueado con exito.");
+  console.log("-------------------------------------------");
   currentUser = ghestUser;
 };
 
 const existElement = (name, type) => {
   let existFile;
   if (!type) {
-    existFile = currentFolder
-      .composite
-      .filter((content) => content.name === name)[0];
+    existFile = currentFolder.composite.filter(
+      (content) => content.name === name
+    )[0];
   } else {
-    existFile = currentFolder
-      .composite
+    existFile = currentFolder.composite
       .filter((content) => content.metadata.type === type)
       .filter((content) => content.name === name)[0];
   }
@@ -168,9 +167,9 @@ const existElement = (name, type) => {
 };
 
 const isUnique = (name) => {
-  const qtyOfFilesSameName = currentFolder
-    .composite
-    .filter((content) => content.name === name);
+  const qtyOfFilesSameName = currentFolder.composite.filter(
+    (content) => content.name === name
+  );
 
   if (qtyOfFilesSameName.length !== 1) {
     return false;
@@ -181,25 +180,24 @@ const isUnique = (name) => {
 
 const finder = (argvs) => {
   const [_, name, type] = argvs;
-  
+
   const exist = existElement(name, type);
   const unique = isUnique(name);
   if (!exist) return false;
   if (!unique && !type)
-  return console.log(
-    `El nombre "${name}" pertenecea a un archivo y a una carpeta. Utilice como tercer argumento el tipo de archivo que quiere ver `
+    return console.log(
+      `El nombre "${name}" pertenecea a un archivo y a una carpeta. Utilice como tercer argumento el tipo de archivo que quiere ver `
     );
-    let elementFound;
-    if (!type) {
-      elementFound = currentFolder
-      .composite
-      .filter((content) => content.name === name)[0];
-    } else {
-    elementFound = currentFolder
-      .composite
+  let elementFound;
+  if (!type) {
+    elementFound = currentFolder.composite.filter(
+      (content) => content.name === name
+    )[0];
+  } else {
+    elementFound = currentFolder.composite
       .filter((content) => content.metadata.type === type)
       .filter((content) => content.name === name)[0];
-    }
+  }
   if (!elementFound) {
     return false;
   } else {
@@ -226,10 +224,12 @@ const indexFinder = (element, where) => {
 const deleteElement = (argvs) => {
   const [_, name, type] = argvs;
 
-  if (checkMyRole() < 2)
-    return console.log(
-      `No tiene los permisos necesarios para realizar esta accion.`
-    );
+  if (checkMyRole() < 2) {
+    console.log("-------------------------------------------");
+    console.log(`No tiene los permisos necesarios para realizar esta accion.`);
+    console.log("-------------------------------------------");
+    return;
+  }
 
   if (argvs.length === 1)
     return console.log("Ingrese un nombre luego de destroy");
@@ -250,10 +250,12 @@ const deleteElement = (argvs) => {
   } else {
     elementFound = finder(argvs);
     indexOfElement = indexFinder(elementFound);
+    console.log("-------------------------------------------");
     console.log(
       `Eliminado el elemento: "${elementFound.name}" de tipo "${elementFound.metadata.type}"`
     );
     currentFolder.removeInComposite(indexOfElement);
+    console.log("-------------------------------------------");
     return true;
   }
 };
@@ -274,13 +276,11 @@ const createFile = (argvs) => {
     return console.log(`El nombre "${name}" ya esta en uso, seleccione otro.`);
   } else {
     const newFileCreated = new File(name, metadata, content);
-    addToComposite(newFileCreated);
+    addToComposite(newFileCreated, "file");
 
-    console.log("                                           ");
     console.log("-------------------------------------------");
     console.log("------------ Archivo creado ---------------");
     console.log("-------------------------------------------");
-    console.log("                                           ");
     console.log(`Nombre del nuevo archivo: "${newFileCreated.name}"`);
     console.log(`Crado en la ruta: ${currentPath}`);
     console.log(`El contenido del nuevo archivo es:`);
@@ -310,7 +310,7 @@ const createFolder = (argvs) => {
       );
 
     const newFolder = new Folder(name, [], metadata);
-    addToComposite(newFolder);
+    addToComposite(newFolder, "folder");
     console.log("-------------------------------------------");
     console.log("------------ Carpeta creada ---------------");
     console.log("-------------------------------------------");
@@ -319,14 +319,14 @@ const createFolder = (argvs) => {
     console.log(`Nombre de la nueva carpeta: "${newFolder.name}"`);
     console.log(`Creado en la ruta: ${currentPath}`);
     console.log("                                           ");
-    console.log("                                           ");
-
     return true;
   }
 };
 
-const addToComposite = (element) => {
-  currentFolder.composite.push(element);
+const addToComposite = (element, type) => {
+  if(type === "file" || type === "folder") return currentFolder.composite.push(element);
+  if(type === "user") return allUsers.composite.push(element)
+  return console.log(`Ocurrio un error!`)
 }
 
 // COMMAND $cd + nameFolderDestination
@@ -339,6 +339,8 @@ const selectFolder = (argvs) => {
     console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
     console.log("-------------------------------------------");
     return;
+  }else if(name === ".."){
+    return moveToParentFolder();
   } else {
     const folderFound = finder([_, name, "folder"]);
 
@@ -389,14 +391,6 @@ const moveToParentFolder = () => {
   }
 };
 
-// COMMAND $sf
-const showCurrentFolder = () => {
-  console.log(">>>>> MOSTRANDO EL CURRENT FOLDER");
-  console.log("                                 ");
-  console.log(currentFolder);
-  console.log("                                 ");
-};
-
 // COMMAND $path
 const showCurrentPath = () => {
   // console.log("                                 ");
@@ -407,22 +401,11 @@ const showCurrentPath = () => {
   // return currentPath;
 };
 
-// COMMAND $pf
-const showParentFolder = () => {
-  console.log("                                 ");
-  console.log(">>>>> PARENT FOLDER IS: ");
-  console.log("                                 ");
-  console.log(parentFolder);
-  console.log("                                 ");
-};
-
 // COMMAND $ls
 const listContent = () => {
   const content = currentFolder.composite;
   if (content.length === 0) return console.log("El directorio esta vacio");
-  console.log(
-    `Mostrando el contenido de la carpeta "${currentFolder.name}"`
-  );
+  console.log(`Mostrando el contenido de la carpeta "${currentFolder.name}"`);
   content.forEach((element) => {
     console.log("----------------------------------------");
     console.log(`Nombre: ${element.name}`);
@@ -489,7 +472,8 @@ const showMetadata = (argvs) => {
 };
 
 const persistData = (argv) => {
-  const content = mainFolder.composite;
+  const contentFilesAndFolders = mainFolder.composite;
+  const contentUsers = allUsers.composite;
 
   const getCircularReplacer = () => {
     const seen = new WeakSet();
@@ -503,26 +487,44 @@ const persistData = (argv) => {
       return value;
     };
   };
-  const stringy = JSON.stringify(content, getCircularReplacer());
+  const filesStringified = JSON.stringify(
+    contentFilesAndFolders,
+    getCircularReplacer()
+  );
+  const usersStringified = JSON.stringify(contentUsers, getCircularReplacer());
 
-  fs.writeFile("data.json", stringy, (e) => {
+  fs.writeFile("data.json", filesStringified, (e) => {
     if (e) {
       return console.log(`Error: ${e}`);
     }
   });
 
-  console.log(JSON.parse(stringy));
+  fs.writeFile("users.json", usersStringified, (e) => {
+    if (e) {
+      return console.log(`Error: ${e}`);
+    }
+  });
+
+  console.log(JSON.parse(filesStringified));
+  console.log(JSON.parse(usersStringified));
 };
 
 const load = () => {
   fs.readFile("data.json", "utf-8", (error, data) => {
     if (!error) {
-      mainFolder.setData(JSON.parse(data))
+      mainFolder.setData(JSON.parse(data));
       console.log(JSON.parse(data));
       return;
     }
   });
-  return;
+  fs.readFile("users.json", "utf-8", (error, data) => {
+    if (!error) {
+      allUsers.setData(JSON.parse(data));
+      console.log(JSON.parse(data));
+      return;
+    }
+  });
+  return true;
 };
 
 module.exports = {
@@ -530,28 +532,16 @@ module.exports = {
   createFolder,
   selectFolder,
   showFile,
-  showCurrentFolder,
   listContent,
   showCurrentPath,
-  moveToParentFolder,
-  showParentFolder,
   showMetadata,
-  finder,
   deleteElement,
-  ////////////////////////
-  //////// USERS /////////
-  ////////////////////////
-  getAllUsers,
   getCurrentUser,
-  checkMyRole,
   createUser,
   login,
   deleteUser,
   updatePassword,
   logout,
-  ////////////////////////
-  //////// DATA /////////
-  ////////////////////////
   persistData,
   load,
 };
