@@ -6,14 +6,11 @@ const controller = require("./controllers");
 const readline = require("readline");
 const rl = readline.createInterface(process.stdin, process.stdout);
 const prefix = `FileSystem> `;
-
 rl.on("line", function (line) {
   const argvs = line.split(" ");
   const command = argvs[0].trim();
+  
   switch (command) {
-    case "cd..": //
-      controller.moveToParentFolder();
-      break;
     case "cd": //
       controller.selectFolder(argvs);
       break;
@@ -93,7 +90,5 @@ console.log("========                         =========");
 console.log("========                         =========");
 console.log("==========================================");
 console.log("==========================================");
-// console.log("Menu de opciones");
-// console.log("--help", "Para la informacion completa de comandos");
 rl.setPrompt(prefix, prefix.length);
 rl.prompt();
