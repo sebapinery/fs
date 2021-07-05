@@ -235,11 +235,7 @@ const deleteElement = (argvs) => {
     return console.log("Ingrese un nombre luego de destroy");
   let elementFound = finder(argvs);
   if (!elementFound)
-    return console.log(`El archivo con nombre "${name}" no existe`);
-  if (!isUnique(name) && !type)
-    return console.log(
-      `Esta intentando borrar un elemento con el nombre "${name} que pertenece a un archivo y a una carpeta. Indique como tercer paramentro el tipo de elemento que quiere eliminar."`
-    );
+    return;
   if (!type) {
     let indexOfElement = indexFinder(elementFound);
     console.log(
@@ -393,12 +389,9 @@ const moveToParentFolder = () => {
 
 // COMMAND $path
 const showCurrentPath = () => {
-  // console.log("                                 ");
-  // console.log(">>>>> SHOWING CURRENT PATH");
-  console.log("                                 ");
-  console.log(currentPath);
-  console.log("                                 ");
-  // return currentPath;
+  console.log("-------------------------------------------");
+  console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
+  console.log("-------------------------------------------");
 };
 
 // COMMAND $ls
