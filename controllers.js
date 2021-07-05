@@ -250,7 +250,6 @@ const deleteElement = (argvs) => {
   }
 };
 
-// COMMAND $cat //// debe ser $create_file
 const createFile = (argvs) => {
   if (checkMyRole() < 2)
     return console.log(
@@ -282,7 +281,6 @@ const createFile = (argvs) => {
   }
 };
 
-// COMMAND $mk + newFolderName
 const createFolder = (argvs) => {
   const name = argvs[1];
   const metadata = {
@@ -313,7 +311,6 @@ const createFolder = (argvs) => {
   }
 };
 
-// COMMAND $cd + nameFolderDestination
 const selectFolder = (argvs) => {
   const [_, name] = argvs;
   if (argvs.length === 1) {
@@ -352,7 +349,6 @@ const selectFolder = (argvs) => {
   }
 };
 
-// COMMAND $cd..
 const moveToParentFolder = () => {
   if (currentFolder === mainFolder) {
     currentPath = currentFolder.metadata.path;
@@ -375,14 +371,12 @@ const moveToParentFolder = () => {
   }
 };
 
-// COMMAND $path
 const showCurrentPath = () => {
   console.log("-------------------------------------------");
   console.log(`Usted esta ahora la ruta >>> ${currentPath}`);
   console.log("-------------------------------------------");
 };
 
-// COMMAND $ls
 const listContent = () => {
   const content = currentFolder.composite;
   if (content.length === 0) return console.log("El directorio esta vacio");
@@ -398,7 +392,6 @@ const listContent = () => {
   });
 };
 
-// COMMAND $show + name
 const showFile = (argvs) => {
   const [_, name] = argvs;
   if (!name) return console.log("Ingrese el nombre del archivo que quiere ver");
@@ -425,7 +418,6 @@ const showFile = (argvs) => {
   }
 };
 
-// COMMAND $metadata + name
 const showMetadata = (argvs) => {
   const [_, name] = argvs;
   if (!name) return console.log("Ingrese el nombre del archivo que quiere ver");
