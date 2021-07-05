@@ -17,16 +17,16 @@ rl.on("line", function (line) {
     case "cd": //
       controller.selectFolder(argvs);
       break;
-    case "cat": // create_file
+    case "create_file": // create_file
       controller.createFile(argvs);
       break;
-    case "mk": // create_folder
+    case "create_folder": // create_folder
       controller.createFolder(argvs);
       break;
     case "ls":
       controller.listContent();
       break;
-    case "path": // whereami
+    case "whereami": // whereami
       controller.showCurrentPath();
       break;
     case "show": // show + name
@@ -35,13 +35,13 @@ rl.on("line", function (line) {
     case "metadata": // metadata + name
       controller.showMetadata(argvs);
       break;
-    case "rm": // destroy name -type?
+    case "destroy": // destroy name -type?
       controller.deleteElement(argvs);
       break;
-    case "cu": // TIENE QUE SER $whoami
+    case "whoami": // TIENE QUE SER $whoami
       controller.getCurrentUser();
       break;
-    case "create": // $create_user
+    case "create_user": // $create_user
       controller.createUser(argvs);
       break;
     case "destroy_user":
@@ -56,6 +56,12 @@ rl.on("line", function (line) {
     case "logout": //
       controller.logout();
       break;
+    case "persist": //
+      controller.persistData(argvs);
+      break;
+    case "load": //
+      controller.load(argvs);
+      break;
     case "exit":
       console.clear();
       console.log("Gracias que tengas un buen dia!");
@@ -63,45 +69,6 @@ rl.on("line", function (line) {
       console.log("");
       console.log("");
       process.exit(0);
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    case "sf": /////////////// dev ///////////////
-      controller.showCurrentFolder();
-      break;
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    case "find": //
-      console.log(controller.finder(argvs));
-      break;
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    case "pf": //
-      controller.showParentFolder();
-      break;
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    case "users": //
-      controller.getAllUsers();
-      break;
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    case "role": //
-      controller.checkMyRole();
-      break;
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    case "persist": //
-      controller.persistData(argvs);
-      break;
-    case "load": //
-      controller.load();
-      break;
     default:
       console.log("COMANDO NO VALIDO: ", argvs);
       break;
