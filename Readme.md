@@ -1,9 +1,18 @@
 
 # File System
 
+### Ejercicio Backend Shipnow.
+
+#### Descripcion
+
+Desarrolla una consola simple para manejar archivos y carpetas ingresando comandos por teclado, similar a
+Bash, por ejemplo.
+
+La consola no puede utilizar librerías externas.
+Todos los recursos deben ser mantenidos en memoria y no persistidos a disco. Los archivos no necesita tener
+extensión pero deben tener metadata (la información de la metadata queda a tu criterio).
+
 ## Iniciar
-
-
 
 ```bash
 node index
