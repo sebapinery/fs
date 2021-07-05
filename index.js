@@ -9,7 +9,7 @@ const prefix = `FileSystem> `;
 rl.on("line", function (line) {
   const argvs = line.split(" ");
   const command = argvs[0].trim();
-  
+
   switch (command) {
     case "cd": //
       controller.selectFolder(argvs);
@@ -71,7 +71,17 @@ rl.on("line", function (line) {
       console.log("");
       process.exit(0);
     default:
-      console.log("COMANDO NO VALIDO: ", argvs);
+      console.log("");
+      console.log("==========================================");
+      console.log(`"${argvs}" NO ES UN COMANDO NO VALIDO`);
+      console.log("==========================================");
+      console.log("");
+      console.log("Puede ver el menu de comandos ingresando:");
+      console.log("COMANDO >>> menu + tipo de menu");
+      console.log("");
+      console.log("Tipos de menu: 'files', 'users' y 'data.'");
+      console.log("");
+
       break;
   }
   rl.setPrompt(prefix, prefix.length);
@@ -95,13 +105,13 @@ console.log("========                         =========");
 console.log("========                         =========");
 console.log("==========================================");
 console.log("==========================================");
-console.log("")
-console.log("Puede ver el menu de comandos ingresando:")
-console.log("COMANDO >>> menu + tipo de menu")
-console.log("")
-console.log("Tipos de menu: 'files', 'users' y 'data.'")
-console.log("")
-console.log("")
+console.log("");
+console.log("Puede ver el menu de comandos ingresando:");
+console.log("COMANDO >>> menu + tipo de menu");
+console.log("");
+console.log("Tipos de menu: 'files', 'users' y 'data.'");
+console.log("");
+console.log("");
 
 rl.setPrompt(prefix, prefix.length);
 rl.prompt();
