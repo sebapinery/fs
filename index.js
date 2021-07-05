@@ -64,7 +64,6 @@ rl.on("line", function (line) {
       break;
     case "exit":
       console.clear();
-      controller.backUpData();
       console.log("Gracias que tengas un buen dia!");
       console.log("");
       console.log("");
@@ -88,7 +87,6 @@ rl.on("line", function (line) {
   rl.prompt();
 }).on("close", function () {
   console.clear();
-  controller.backUpData();
   console.log("Gracias que tengas un buen dia!");
   console.log("");
   console.log("");
