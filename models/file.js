@@ -10,32 +10,6 @@ class File {
       )} - ${new Date().toLocaleTimeString("es-AR")}`,
     };
   }
-
-  // showDataCreated(){
-  //   return this.metadata.createdAt;
-  // }
-
-  // showContent(){
-  //   return this.content;
-  // }
-
-  // showType() {
-  //   return this.metadata.type;
-  // }
-
-  // showName() {
-  //   return this.name;
-  // }
-  // showMetadata() {
-  //   return this.metadata;
-  // }
-  // showPath() {
-  //   return this.metadata.path;
-  // }
-
-  // print() {
-  //   console.log(this);
-  // }
 }
 
 module.exports = File;

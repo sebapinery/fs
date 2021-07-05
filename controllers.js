@@ -70,7 +70,7 @@ const createUser = (argvs) => {
   }
   if (metadata.roleId === undefined) {
     console.log(
-      `El rol seleccionado no es existe. Debe ingresarlo como '-role='`
+      `El rol seleccionado no existe. Debe ingresarlo como '-role='`
     );
     console.log("");
     console.log(`Roles validos son: 'super', 'regular' y 'read_only'`);
@@ -142,10 +142,10 @@ const updatePassword = (argvs) => {
 };
 
 const logout = () => {
+  currentUser = ghestUser;
   console.log("-------------------------------------------");
   console.log("Usted se ha deslogueado con exito.");
   console.log("-------------------------------------------");
-  currentUser = ghestUser;
 };
 
 const existElement = (name, type) => {
