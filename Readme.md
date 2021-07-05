@@ -24,7 +24,7 @@ read_only: (Usuario actual al iniciar la terminal o hacer logout de cualquier us
 username: ghest
 password: 1234
 ```
-## Comandos
+## Comandos de manejo de archivos
 
 Archivos y carpetas
 
@@ -67,6 +67,8 @@ Obtener la ruta de la carpeta actual
 ```bash
 whereami
 ```
+## Comandos de manejo de usuarios
+
 Crear un usuario nuevo como superusuario
 ```bash
 create_user username password -role=ready_only
@@ -91,7 +93,7 @@ Obtener nombre del usuario actual
 whoami
 ```
 
-## Persistir datos
+## Comandos de persistencia de datos
 
 Cargar datos desde archivo JSON. Como tercer parametro indique si va a hacer backup de "data" o "users"
 
