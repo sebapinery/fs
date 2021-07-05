@@ -113,10 +113,10 @@ const addToComposite = (element, type) => {
 
 const removeFromComposite = (element, type) => {
   if (!type) {
-    return currentFolder.composite.filter(e  => e !== element);
+    return currentFolder.composite.filter((e) => e !== element);
   }
   if (type === "user") {
-    return allUsers.composite.filter(e  => e !== element);
+    return allUsers.composite.filter((e) => e !== element);
   }
 
   return console.log(`Ocurrio un error!`);
@@ -232,7 +232,7 @@ const deleteElement = (argvs) => {
   if (argvs.length === 1)
     return console.log("Ingrese un nombre luego de destroy");
   let elementFound = finder(argvs);
-  if (!elementFound) return console.log(`Intente nuevamente`) ;
+  if (!elementFound) return console.log(`Intente nuevamente`);
   if (!type) {
     console.log(
       `Eliminado el elemento: "${elementFound.name}" de tipo "${elementFound.metadata.type}"`
@@ -501,12 +501,17 @@ const persistData = (argvs) => {
       "Por favor ingrese el tipo de dato que quiere cargar. Puede cargar users y data. Por ejemplo: '-persist data.json data' o '-persist users.json users' "
     );
 
+  if (type !== "data" && type !== "users")
+    return console.log(
+      `Tipo de dato no valido. Los datos validos son 'data' y 'users'`
+    );
+
   if (type == "data") {
     fs.readFile(fileName, "utf-8", (error, data) => {
       if (!error) {
         console.log("Data cargada con exito!");
-        return currentFolder.setData(JSON.parse(data))
-      }else{
+        return currentFolder.setData(JSON.parse(data));
+      } else {
         return console.log(`Error: ${error}`);
       }
     });
@@ -515,16 +520,99 @@ const persistData = (argvs) => {
   if (type == "users") {
     fs.readFile(fileName, "utf-8", (error, data) => {
       if (!error) {
-        console.log("Usuarios cargados con exito!")
-        allUsers.composite = JSON.parse(data)
+        console.log("Usuarios cargados con exito!");
+        allUsers.composite = JSON.parse(data);
         return;
-      }else{
+      } else {
         return console.log(`Error: ${error}`);
       }
     });
   }
+  return;
+};
+
+const menuOptions = (argvs) => {
+  const [_, menuType] = argvs;
+
+  switch (menuType) {
+    case "files":
+      menuArchivos()
+      break;
+    case "users":
+      menuUsers()
+      break;
+    case "data":
+      menuPersist()
+      break;
+    default:
+      console.log("Tipo de menu no valido. Puede ver menu de 'files', 'users' o 'data'.")
+      break;
+  }
+
+}
+
+const menuArchivos = () => {
+  console.log("---------- MENU DE COMANDOS DE ARCHIVOS ----------");
+  console.log("Crear un archivo con un contenido");
+  console.log("COMANDO >>> create_file + 'nombre' + 'contenido' ");
+  console.log("--------------------------------------------------");
+  console.log("Ver el contenido de un archivo");
+  console.log("COMANDO >>> show + 'nombre' ");
+  console.log("--------------------------------------------------");
+  console.log("Ver la metadata de un archivo");
+  console.log("COMANDO >>> metadata + 'nombre' ");
+  console.log("--------------------------------------------------");
+  console.log("Crear una carpeta");
+  console.log("COMANDO >>> create_folder + 'nombre' ");
+  console.log("--------------------------------------------------");
+  console.log("Entrar a una carpeta");
+  console.log("COMANDO >>> cd + 'nombre de la carpeta' ");
+  console.log("--------------------------------------------------");
+  console.log("Volver una carpeta para atrás:");
+  console.log("COMANDO >>> cd .. ");
+  console.log("--------------------------------------------------");
+  console.log("Eliminar archivo o carpeta");
+  console.log("COMANDO >>> destroy 'nombre del archivo o carpeta a eliminar' ");
+  console.log("--------------------------------------------------");
+  console.log("Ver contenido de la carpeta actual");
+  console.log("COMANDO >>> ls");
+  console.log("--------------------------------------------------");
+  console.log("Obtener la ruta de la carpeta actual");
+  console.log("COMANDO >>> whereami"); 
+  console.log("--------------------------------------------------");
 
 };
+
+const menuUsers = () => {
+  console.log("---------- MENU DE COMANDOS DE USUARIOS ----------");
+  console.log("Crear un usuario nuevo como superusuario");
+  console.log("Puede utilizar los roles 'read_only', 'regular' o 'super'")
+  console.log("COMANDO >>> create_user username password -role=ready_only");
+  console.log("--------------------------------------------------");
+  console.log("Actualizar contraseña del usuario actual")
+  console.log("COMANDO >>> update_password + new_password");
+  console.log("--------------------------------------------------");
+  console.log("Remover usuarios como superusuario")
+  console.log("COMANDO >>> destroy_user + username");
+  console.log("--------------------------------------------------");
+  console.log("Loguearte como usuario")
+  console.log("COMANDO >>> login + username + password");
+  console.log("--------------------------------------------------");
+  console.log("Obtener nombre del usuario actual")
+  console.log("COMANDO >>> whoami");
+  console.log("--------------------------------------------------");
+}
+
+const menuPersist = () => {
+  console.log("---------- MENU DE PERSISTENCIA DE DATOS ----------");
+  console.log("Para cargar datos ya existentes desde un archivo:");
+  console.log("Como tercer parametro indique si quiere cargar 'data' o 'users' segun corresponda");
+  console.log("COMANDO >>> -persisted + 'file' + type")
+  console.log("---------------------------------------------------");
+  console.log("Hacer backup de los datos");
+  console.log("Se realizara backup de los datos y los usuarios en los archivos 'data.json' y 'users.json'" )
+  console.log("COMANDO >>> backup")
+}
 
 module.exports = {
   createFile,
@@ -543,4 +631,5 @@ module.exports = {
   logout,
   persistData,
   backUpData,
+  menuOptions
 };

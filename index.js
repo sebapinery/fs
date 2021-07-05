@@ -59,8 +59,12 @@ rl.on("line", function (line) {
     case "backup": //
       controller.backUpData();
       break;
+    case "menu":
+      controller.menuOptions(argvs);
+      break;
     case "exit":
       console.clear();
+      controller.backUpData();
       console.log("Gracias que tengas un buen dia!");
       console.log("");
       console.log("");
@@ -74,6 +78,7 @@ rl.on("line", function (line) {
   rl.prompt();
 }).on("close", function () {
   console.clear();
+  controller.backUpData();
   console.log("Gracias que tengas un buen dia!");
   console.log("");
   console.log("");
@@ -90,5 +95,13 @@ console.log("========                         =========");
 console.log("========                         =========");
 console.log("==========================================");
 console.log("==========================================");
+console.log("")
+console.log("Puede ver el menu de comandos ingresando:")
+console.log("COMANDO >>> menu + tipo de menu")
+console.log("")
+console.log("Tipos de menu: 'files', 'users' y 'data.'")
+console.log("")
+console.log("")
+
 rl.setPrompt(prefix, prefix.length);
 rl.prompt();
