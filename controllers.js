@@ -504,7 +504,8 @@ const persistData = (argvs) => {
         console.log("Data cargada con exito!");
         return currentFolder.setData(JSON.parse(data));
       } else {
-        return console.log(`Error: ${error}`);
+         console.log(`Error: ${error}`);
+         return
       }
     });
   }
@@ -516,7 +517,8 @@ const persistData = (argvs) => {
         allUsers.composite = JSON.parse(data);
         return;
       } else {
-        return console.log(`Error: ${error}`);
+         console.log(`Error: ${error}`);
+         return
       }
     });
   }
