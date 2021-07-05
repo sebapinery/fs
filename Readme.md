@@ -30,34 +30,39 @@ Archivos y carpetas
 
 Crear un archivo con un contenido
 ```bash
-create_file file_1 "Contenido"
+create_file "file_1" "Contenido"
 ```
 
 Ver el contenido de un archivo
 ```bash
-show file_1
+show "file_1"
 ```
 Ver la metadata de un archivo
 ```bash
-metadata file_1
+metadata "file_1"
 ```
 Crear una carpeta
 ```bash
-create_folder folder_1
+create_folder "folder_1"
 ```
 Entrar a una carpeta
 ```bash
-cd folder_1
+cd "folder_1"
 ```
 Volver una carpeta para atrás:
 ```bash
 cd ..
 ```
-Eliminar archivo o carpeta
-```bash
-destroy file_1
+Eliminar archivo o carpeta. En caso de que el nombre se encuentre repetido en un archivo o carpeta indique como tercer parametro el tipo de elemento que quiere eliminar. 
 
-destroy folder_1
+```bash
+destroy "file_1"
+
+destroy "folder_1"
+
+En caso de nombre duplicado ingrese:
+destroy "index" file // destroy "index" folder
+
 ```
 Ver contenido de la carpeta actual
 ```bash
@@ -71,22 +76,22 @@ whereami
 
 Crear un usuario nuevo como superusuario
 ```bash
-create_user username password -role=ready_only
+create_user "username" "password" -role="ready_only"
 ```
 
 Actualizar contraseña del usuario actual
 ```bash
-update_password new_password
+update_password "new_password"
 ```
 
 Remover usuarios como superusuario
 ```bash
-destroy_user username
+destroy_user "username"
 ```
 
 Loguearte como usuario
 ```bash
-login username password
+login "username" "password"
 ```
 Obtener nombre del usuario actual
 ```bash
